@@ -1,6 +1,7 @@
 import requests
 from User import User
 from termcolor import colored
+from Create_Split import createSplit
 
 config_file = "config.txt"
 
@@ -10,7 +11,7 @@ def createaccount():
     lastname = input("Enter Your Last Name: ")
     email = input("Enter Your Email Address: ")
     phone = input("Enter Your 10 Digit Phone Number: ")
-    user = User("adminapikey", "orgID", "userID",
+    user = User(PROCESS.ENV.ADMINAPIKEY, PROCESS.ENV.ORGID, "userID",
                 firstname, lastname, email, phone)
     user.write(config_file)
     print("Setting up your account...")
@@ -93,13 +94,16 @@ def initial_prompt():
 
 def knownUserPrompt(user):
     print(colored((f"Hi {user.firstname}!!"), 'blue'))
-    print("1. Log Out")
-    print("2. Exit")
+    print("1. Create a Split")
+    print("2. Log Out")
+    print("3. Exit")
     selection = input("Selection: ")
     if selection == "1":
+        createSplit()
+    elif selection == "2":
         user.delete()
         initial_prompt()
-    elif selection == "2":
+    elif selection == "3":
         exit()
     else:
         print(f"Invalid selection: {selection}")
