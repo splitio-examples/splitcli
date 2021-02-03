@@ -1,13 +1,21 @@
 import requests
+from User import User
+from termcolor import colored
+
+config_file = "config.txt"
 
 
 def createaccount():
     firstname = input("Enter Your First Name: ")
     lastname = input("Enter Your Last Name: ")
     email = input("Enter Your Email Address: ")
-
-    response = requests.post(
-        'https://api.hsforms.com/submissions/v3/integration/submit/3371296/8d489e14-08ee-4e78-920e-bb211ea6c9c9', json={"fields": [
+    phone = input("Enter Your 10 Digit Phone Number: ")
+    user = User("adminapikey", "orgID", "userID",
+                firstname, lastname, email, phone)
+    user.write(config_file)
+    print("Setting up your account...")
+    split_response = requests.post(
+        'https://split-cli-backend.herokuapp.com/api/v1/register-for-split', json={"fields": [
             {
                 "name": "firstname",
                 "value": firstname
@@ -19,27 +27,98 @@ def createaccount():
             {
                 "name": "email",
                 "value": email
+            },
+            {
+                "name": "phone",
+                "value": phone
             }
         ]})
 
-    response.status_code
-    response.json()
+    split_response.status_code
+    split_response.json()
 
-    if response.status_code != 200:
-        print(response.json())
+    if split_response.status_code != 200:
+        print(split_response.json())
     else:
-        print("Your accout has been created! Please check your email.")
+        confirmation_code = input(
+            "Please enter the 6 digit confirmation code sent to your phone: ")
+        okta_response = requests.post(
+            'https://split-cli-backend.herokuapp.com/api/v1/verify-factor', json={"fields": [
+                {
+                    "name": "userId",
+                    "value": split_response.json()["userId"]
+                },
+                {
+                    "name": "factorId",
+                    "value": split_response.json()["factorId"]
+                },
+                {
+                    "name": "passCode",
+                    "value": confirmation_code
+                }
+            ]}
+        )
+
+
+def signin():
+    split_apikey = input("Enter Your Split API Key")
+    signin_response = requests.post('SPLITSIGNIN URL', json={"fields": [
+        {
+            "name": "apikey",
+            "value": split_apikey
+        }
+    ]})
+
+    signin_response.status_code
+    signin_response.json()
+
+    if signin_response.status_code != 200:
+        print(signin_response.json())
+    else:
+        print("You are signed in")
+        initial_prompt()
+
+
+def getUser():
+    return User.load(config_file)
 
 
 def initial_prompt():
-    print("Welcome to Split! Please Make A Selection:")
-    print("1. Create Account")
+    user = getUser()
+    if user != None:
+        knownUserPrompt(user)
+    else:
+        newUserPrompt()
+
+
+def knownUserPrompt(user):
+    print(colored((f"Hi {user.firstname}!!"), 'blue'))
+    print("1. Log Out")
     print("2. Exit")
+    selection = input("Selection: ")
+    if selection == "1":
+        user.delete()
+        initial_prompt()
+    elif selection == "2":
+        exit()
+    else:
+        print(f"Invalid selection: {selection}")
+        initial_prompt()
+
+
+def newUserPrompt():
+    print("Welcome to Split! Do you have an existing account?")
+    print("1. No, I need to create an account")
+    print("2. Yes, take me to sign in")
+    print("3. Exit")
     selection = input("Selection: ")
     if selection == "1":
         createaccount()
         initial_prompt()
     elif selection == "2":
+        sign_in()
+        initial_prompt()
+    elif selection == "3":
         exit()
     else:
         print(f"Invalid selection: {selection}")
