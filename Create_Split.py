@@ -12,7 +12,7 @@ def createSplit():
     create_split_response = requests.post(
         f"https://api.split.io/internal/api/v2/splits/ws/f8aa2660-3f31-11eb-be37-12b057418355/trafficTypes/{traffic_type_option}", headers: {
             'Content-Type': 'application/json',
-            'Authorization': PROCESS.ENV.ADMINAPIKEY
+            'Authorization': config('ADMIN_API_KEY')
         }, json={"fields": [
             {
                  "name": "name",

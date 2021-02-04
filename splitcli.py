@@ -11,7 +11,7 @@ def createaccount():
     lastname = input("Enter Your Last Name: ")
     email = input("Enter Your Email Address: ")
     phone = input("Enter Your 10 Digit Phone Number: ")
-    user = User(PROCESS.ENV.ADMINAPIKEY, PROCESS.ENV.ORGID, "userID",
+    user = User(config('ADMIN_API_KEY'), config('ORG_ID'), "userID",
                 firstname, lastname, email, phone)
     user.write(config_file)
     print("Setting up your account...")
