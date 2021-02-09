@@ -3,6 +3,7 @@ from User import User
 from termcolor import colored
 from Create_Split import createSplit
 from art import *
+from decouple import config
 
 config_file = "config.txt"
 
