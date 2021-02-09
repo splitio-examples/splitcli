@@ -2,6 +2,7 @@ import requests
 from User import User
 from termcolor import colored
 from Create_Split import createSplit
+from art import *
 
 config_file = "config.txt"
 
@@ -93,10 +94,10 @@ def initial_prompt():
 
 
 def knownUserPrompt(user):
-    print(colored((f"Hi {user.firstname}!!"), 'blue'))
-    print("1. Create a Split")
-    print("2. Log Out")
-    print("3. Exit")
+    print(colored(text2art(f"Hi {user.firstname}!!"), 'cyan'))
+    print(colored("1. Create a Split", 'green'))
+    print(colored("2. Log Out", 'red'))
+    print(colored("3. Exit", 'blue'))
     selection = input("Selection: ")
     if selection == "1":
         createSplit()
