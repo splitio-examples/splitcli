@@ -13,12 +13,10 @@ def createaccount():
     lastname = input("Enter Your Last Name: ")
     email = input("Enter Your Email Address: ")
     phone = input("Enter Your 10 Digit Phone Number: ")
-    user = User(config('ADMIN_API_KEY'), config('ORG_ID'), "userID",
-                firstname, lastname, email, phone)
-    user.write(config_file)
+
     print("Setting up your account...")
     split_response = requests.post(
-        'https://split-cli-backend.herokuapp.com/api/v1/register-for-split', json={"fields": [
+        'https://split-cli-backend.herokuapp.com/api/v1/create-and-enroll-user', json={"fields": [
             {
                 "name": "firstname",
                 "value": firstname
@@ -46,7 +44,7 @@ def createaccount():
         confirmation_code = input(
             "Please enter the 6 digit confirmation code sent to your phone: ")
         okta_response = requests.post(
-            'https://split-cli-backend.herokuapp.com/api/v1/verify-factor', json={"fields": [
+            'https://split-cli-backend.herokuapp.com/api/v1/verify-and-complete', json={"fields": [
                 {
                     "name": "userId",
                     "value": split_response.json()["userId"]
@@ -58,28 +56,54 @@ def createaccount():
                 {
                     "name": "passCode",
                     "value": confirmation_code
+                },
+                {
+                    "name": "firstname",
+                    "value": firstname
+                },
+                {
+                    "name": "lastname",
+                    "value": lastname
+                },
+                {
+                    "name": "email",
+                    "value": email
                 }
             ]}
         )
 
+        okta_response.status_code
+        okta_response_data = okta_response.json()
 
-def signin():
-    split_apikey = input("Enter Your Split API Key")
-    signin_response = requests.post('SPLITSIGNIN URL', json={"fields": [
-        {
-            "name": "apikey",
-            "value": split_apikey
-        }
-    ]})
+        if okta_response.status_code == 200:
+            user = User(okta_response_data["apiToken"], okta_response_data["orgId"], okta_response_data["userId"],
+                        firstname, lastname, email, phone)
+            user.write(config_file)
+            print(
+                "Account Successfully Created, Wrote to Config File. Here is your email and password. Save it")
+            print(
+                f"email:{okta_response_data['email']}, password:{okta_response_data['password']}")
+        else:
+            print("error")
 
-    signin_response.status_code
-    signin_response.json()
 
-    if signin_response.status_code != 200:
-        print(signin_response.json())
-    else:
-        print("You are signed in")
-        initial_prompt()
+# def signin():
+#     split_apikey = input("Enter Your Split API Key")
+#     signin_response = requests.post('SPLITSIGNIN URL', json={"fields": [
+#         {
+#             "name": "apikey",
+#             "value": split_apikey
+#         }
+#     ]})
+
+#     signin_response.status_code
+#     signin_response.json()
+
+#     if signin_response.status_code != 200:
+#         print(signin_response.json())
+#     else:
+#         print("You are signed in")
+#         initial_prompt()
 
 
 def getUser():
