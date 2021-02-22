@@ -1,0 +1,27 @@
+Metadata-Version: 2.1
+Name: splitcli
+Version: 0.0.1
+Summary: Use Split.io from the command line
+Home-page: https://github.com/splitio-examples/splitcli
+Author: Talia Nassi & Micah Silverman
+Author-email: info@split.io
+License: UNKNOWN
+Project-URL: Bug Reports, https://github.com/splitio-examples/splitcli/issues
+Project-URL: Source, https://github.com/splitio-examples/splitcli
+Description: Split CLI
+        
+Keywords: development,split,feature flags
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Feature Flags
+Classifier: License :: OSI Approved :: Apache License
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3 :: Only
+Requires-Python: >=3.6, <4
+Description-Content-Type: text/markdown
+Provides-Extra: dev
+Provides-Extra: test

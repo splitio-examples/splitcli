@@ -1,0 +1,12 @@
+LICENSE.txt
+MANIFEST.in
+README.md
+pyproject.toml
+setup.cfg
+setup.py
+src/splitcli.egg-info/PKG-INFO
+src/splitcli.egg-info/SOURCES.txt
+src/splitcli.egg-info/dependency_links.txt
+src/splitcli.egg-info/entry_points.txt
+src/splitcli.egg-info/requires.txt
+src/splitcli.egg-info/top_level.txt

@@ -1,0 +1,11 @@
+requests
+termcolor
+pick
+python-decouple
+art
+
+[dev]
+check-manifest
+
+[test]
+coverage
