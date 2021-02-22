@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 /config.txt
 /.env
 */__pycache__
 .vscode
+=======
+__pycache__
+*.egg-info
+>>>>>>> reorganized project for installation with pip.

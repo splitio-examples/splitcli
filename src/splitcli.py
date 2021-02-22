@@ -65,17 +65,12 @@ def newUserPrompt():
         print(f"Invalid selection: {selection}")
         initial_prompt()
 
-major_required = 3
-minor_required = 6
+def main():
+    major_required = 3
+    minor_required = 6
 
-if sys.version_info.major < major_required or sys.version_info.minor < minor_required:
-    print(f"Minimum version requirement is: {major_required}.{minor_required}. Your version is: {sys.version_info.major}.{sys.version_info.minor}")
-    exit()
+    if sys.version_info.major < major_required or sys.version_info.minor < minor_required:
+        print(f"Minimum version requirement is: {major_required}.{minor_required}. Your version is: {sys.version_info.major}.{sys.version_info.minor}")
+        exit()
 
-home = expanduser("~")
-config_path=f"{home}/.split"
-if not os.path.isdir(config_path):
-    os.mkdir(config_path)
-config_file = f"{config_path}/splitcli.json"
-
-initial_prompt()
+    initial_prompt()

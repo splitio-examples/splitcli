@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <h1 align="center">Welcome to the Split CLI 👋</h1>
 <p>
   <a href="https://twitter.com/talia\_nassi" target="_blank">
@@ -40,3 +41,19 @@ Give a ⭐️ if this project helped you!
 
 ***
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
+=======
+Split CLI
+----------
+The Split CLI is used to create a Split.io account and prepare that account for use with the Split API all from the command line.
+
+## Build locally
+
+Split CLI requires Python 3.6 at minimum.
+
+To install locally in edit mode, you can run:
+
+```
+python -m pip install -e .
+```
+
+>>>>>>> reorganized project for installation with pip.
