@@ -18,7 +18,6 @@ SPLIT_CLI_BACKEND_BASE_URL = f"{SPLIT_CLI_BACKEND_URI}{SPLIT_CLI_BACKEND_API_URI
 #             "value": split_apikey
 #         }
 #     ]})
-
 #     signin_response.status_code
 #     signin_response.json()
 
