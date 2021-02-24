@@ -1,0 +1,6 @@
+Add explanation that the CLI is limited to the US only at the moment
+- Surface a link to the signup page
+
+Add messaging / load animation while waiting for account creation
+
+Clear out or print whitespace when you log out to separate the prompts
