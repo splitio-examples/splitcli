@@ -1,6 +1,14 @@
 import json
 import os
 
+config_file = "config.txt"
+
+user_singleton = None
+def get_user():
+    global user_singleton
+    if user_singleton == None:
+        user_singleton = User.load(config_file)
+    return user_singleton
 
 class User(object):
     def __init__(self, adminapi: str, orgID: str, userID: str, firstname: str, lastname: str, email: str, phone: str):
@@ -15,7 +23,8 @@ class User(object):
     def __str__(self):
         return json.dumps(self.__dict__)
 
-    def write(self, filename):
+    def write(self):
+        filename = config_file
         with open(filename, 'w') as f:
             json.dump(self.__dict__, f)
 

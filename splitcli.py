@@ -1,92 +1,9 @@
-import requests
-from User import User
 from termcolor import colored
-from Create_Split import createSplit, create_split, selection_get_split, selection_create_split
-from Kill_Split import selection_kill_split
 from art import *
-from decouple import config
 
-config_file = "config.txt"
-
-
-def createaccount():
-    firstname = input("Enter Your First Name: ")
-    lastname = input("Enter Your Last Name: ")
-    email = input("Enter Your Email Address: ")
-    phone = input("Enter Your 10 Digit Phone Number: ")
-
-    print("Setting up your account...")
-    split_response = requests.post(
-        'https://split-cli-backend.herokuapp.com/api/v1/create-and-enroll-user', json={"fields": [
-            {
-                "name": "firstname",
-                "value": firstname
-            },
-            {
-                "name": "lastname",
-                "value": lastname
-            },
-            {
-                "name": "email",
-                "value": email
-            },
-            {
-                "name": "phone",
-                "value": phone
-            }
-        ]})
-
-    split_response.status_code
-    split_response.json()
-
-    if split_response.status_code != 200:
-        print(split_response.json())
-    else:
-        confirmation_code = input(
-            "Please enter the 6 digit confirmation code sent to your phone: ")
-        okta_response = requests.post(
-            'https://split-cli-backend.herokuapp.com/api/v1/verify-and-complete', json={"fields": [
-                {
-                    "name": "userId",
-                    "value": split_response.json()["userId"]
-                },
-                {
-                    "name": "factorId",
-                    "value": split_response.json()["factorId"]
-                },
-                {
-                    "name": "passCode",
-                    "value": confirmation_code
-                },
-                {
-                    "name": "firstname",
-                    "value": firstname
-                },
-                {
-                    "name": "lastname",
-                    "value": lastname
-                },
-                {
-                    "name": "email",
-                    "value": email
-                }
-            ]}
-        )
-
-        okta_response.status_code
-        okta_response_data = okta_response.json()
-
-        if okta_response.status_code == 200:
-            user = User(okta_response_data["apiToken"], okta_response_data["orgId"], okta_response_data["userId"],
-                        firstname, lastname, email, phone)
-            user.write(config_file)
-            print(
-                "Account Successfully Created, Wrote to Config File. Here is your email and password. Save it")
-            print(
-                f"email:{okta_response_data['email']}, password:{okta_response_data['password']}")
-        else:
-            print("error")
-
+from selectors.split_selectors import *
+from accounts.user import get_user
+from accounts import signup
 
 # def signin():
 #     split_apikey = input("Enter Your Split API Key")
@@ -107,17 +24,12 @@ def createaccount():
 #         initial_prompt()
 
 
-def getUser():
-    return User.load(config_file)
-
-
 def initial_prompt():
-    user = getUser()
+    user = get_user()
     if user != None:
         knownUserPrompt(user)
     else:
         newUserPrompt()
-
 
 def knownUserPrompt(user):
     print(colored(text2art(f"Hi {user.firstname}!!"), 'cyan'))
@@ -131,11 +43,11 @@ def knownUserPrompt(user):
     if selection == "1":
         selection_create_split()
     elif selection == "2":
-        createSplit()
+        selection_create_split()
     elif selection == "3":
         selection_kill_split()
     elif selection == "4":
-        createSplit()
+        selection_create_split()
     elif selection == "5":
         user.delete()
         initial_prompt()
@@ -145,7 +57,6 @@ def knownUserPrompt(user):
         print(f"Invalid selection: {selection}")
         initial_prompt()
 
-
 def newUserPrompt():
     print("Welcome to Split! Do you have an existing account?")
     print("1. No, I need to create an account")
@@ -153,7 +64,7 @@ def newUserPrompt():
     print("3. Exit")
     selection = input("Selection: ")
     if selection == "1":
-        createaccount()
+        signup.create_account()
         initial_prompt()
     elif selection == "2":
         sign_in()
@@ -163,6 +74,5 @@ def newUserPrompt():
     else:
         print(f"Invalid selection: {selection}")
         initial_prompt()
-
 
 initial_prompt()
