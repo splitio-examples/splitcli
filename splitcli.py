@@ -2,6 +2,7 @@ import requests
 from User import User
 from termcolor import colored
 from Create_Split import createSplit, create_split, selection_get_split, selection_create_split
+from Kill_Split import selection_kill_split
 from art import *
 from decouple import config
 
@@ -129,11 +130,10 @@ def knownUserPrompt(user):
     selection = input(colored("Selection: ", "cyan"))
     if selection == "1":
         selection_create_split()
-
     elif selection == "2":
         createSplit()
     elif selection == "3":
-        createSplit()
+        selection_kill_split()
     elif selection == "4":
         createSplit()
     elif selection == "5":
