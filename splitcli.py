@@ -1,7 +1,7 @@
 import requests
 from User import User
 from termcolor import colored
-from Create_Split import createSplit
+from Create_Split import createSplit, create_split, selection_get_split, selection_create_split
 from art import *
 from decouple import config
 
@@ -120,19 +120,26 @@ def initial_prompt():
 
 def knownUserPrompt(user):
     print(colored(text2art(f"Hi {user.firstname}!!"), 'cyan'))
-    print(colored("1. Create a Split", 'red'))
-    print(colored("2. Ramp Up a Split", 'yellow'))
-    print(colored("3. Log Out", 'green'))
-    print(colored("5. Exit", 'blue'))
-    selection = input("Selection: ")
+    print(colored("1. Create a Split", 'green'))
+    print(colored("2. Ramp a Split", 'yellow'))
+    print(colored("3. Kill a Split", 'red'))
+    print(colored("4. Promote a Split", 'blue'))
+    print(colored("5. Log Out", 'white'))
+    print(colored("6. Exit", 'white'))
+    selection = input(colored("Selection: ", "cyan"))
     if selection == "1":
-        createSplit()
+        selection_create_split()
+
     elif selection == "2":
         createSplit()
     elif selection == "3":
+        createSplit()
+    elif selection == "4":
+        createSplit()
+    elif selection == "5":
         user.delete()
         initial_prompt()
-    elif selection == "4":
+    elif selection == "6":
         exit()
     else:
         print(f"Invalid selection: {selection}")
