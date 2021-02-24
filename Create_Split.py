@@ -38,8 +38,8 @@ def rampSplit(ramp, comment):
             }
         ],
         "defaultTreatment": "off",
-        # "baselineTreatment": "off",
-        # "rules": [],
+        "baselineTreatment": "off",
+        "rules": [],
         "defaultRule": [
             {
                 "treatment": "on",
@@ -50,45 +50,45 @@ def rampSplit(ramp, comment):
                 "size": 100 - ramp
             }
         ],
-        # "comment": comment
+        "comment": comment
     }
 
 
-def movie():
-    return {
-        "name": "movie_filter",
-        # "environment": {
-        #     "id": "f8aa2660-3f31-11eb-be37-12b057418355",
-        #     "name": "Prod-Default"
-        # },
-        # "trafficType": {
-        #     "id": "f8a8ede0-3f31-11eb-be37-12b057418355",
-        #     "name": "user"
-        # },
-        "killed": False,
-        "treatments": [
-            {
-                "name": "USA",
-                "description": "USA Filter"
-            },
-            {
-                "name": "default",
-                "description": ""
-            }
-        ],
-        "defaultTreatment": "USA",
-        "baselineTreatment": "default",
-        "trafficAllocation": 100,
-        "rules": [],
-        "defaultRule": [
-            {
-                "treatment": "USA",
-                "size": 100
-            }
-        ],
-        # "creationTime": 1613767914941,
-        # "lastUpdateTime": 1613768561090
-    }
+# def movie():
+#     return {
+#         "name": "movie_filter",
+#         # "environment": {
+#         #     "id": "f8aa2660-3f31-11eb-be37-12b057418355",
+#         #     "name": "Prod-Default"
+#         # },
+#         # "trafficType": {
+#         #     "id": "f8a8ede0-3f31-11eb-be37-12b057418355",
+#         #     "name": "user"
+#         # },
+#         "killed": False,
+#         "treatments": [
+#             {
+#                 "name": "USA",
+#                 "description": "USA Filter"
+#             },
+#             {
+#                 "name": "default",
+#                 "description": ""
+#             }
+#         ],
+#         "defaultTreatment": "USA",
+#         "baselineTreatment": "default",
+#         "trafficAllocation": 100,
+#         "rules": [],
+#         "defaultRule": [
+#             {
+#                 "treatment": "USA",
+#                 "size": 100
+#             }
+#         ],
+#         # "creationTime": 1613767914941,
+#         # "lastUpdateTime": 1613768561090
+#     }
 
 
 def createSplit():
@@ -167,7 +167,7 @@ def selection_split_type():
 
 def selection_environment():
     # todo: add selection
-    return "Staging-Default"
+    return "Prod-Default"
 
 
 def selection_traffic_type():
@@ -213,3 +213,25 @@ def get_split(workspace_id, split_name, environment_name):
             'Authorization': "Bearer " + config('ADMIN_API_KEY')
         })
     print(fetch_split_response.json())
+
+
+def selection_kill_split():
+    split_name = input("Enter the name of the Split you wish to kill: ")
+    environment_name = selection_environment()
+    workspace_id = selection_workspace()['id']
+    kill_split_in_environment(
+        workspace_id, environment_name, split_name)
+
+
+def kill_split_in_environment(workspace_id, environment_name, split_name):
+    kill_split_response = requests.post(
+        f"https://api.split.io/internal/api/v2/splits/ws/{workspace_id}/{split_name}/environments/{environment_name}/kill", headers={
+            'Content-Type': 'application/json',
+            'Authorization': "Bearer " + config('ADMIN_API_KEY')
+        })
+    kill_split_response.status_code
+    kill_split_response.json()
+    if kill_split_response.status_code != 200:
+        print(kill_split_response.json())
+    else:
+        print(colored(f"You killed {split_name}. RIP.", "red"))
