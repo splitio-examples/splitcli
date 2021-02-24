@@ -7,11 +7,20 @@ user_singleton = None
 def get_user():
     global user_singleton
     if user_singleton == None:
-        user_singleton = User.load(config_file)
+        user_singleton = load_user(config_file)
     return user_singleton
 
-class User(object):
-    def __init__(self, adminapi: str, orgID: str, userID: str, firstname: str, lastname: str, email: str, phone: str):
+def load_user(filename):
+    try:
+        with open(filename, 'r') as f:
+            dictionary = json.load(f)
+            return User(filename, dictionary["adminapi"], dictionary["orgID"], dictionary["userID"], dictionary["firstname"], dictionary["lastname"], dictionary["email"], dictionary["phone"])
+    except:
+        return None
+
+class User(object):    
+    def __init__(self, filename, adminapi: str, orgID: str, userID: str, firstname: str, lastname: str, email: str, phone: str):
+        self.filename = filename
         self.adminapi = adminapi
         self.orgID = orgID
         self.userID = userID
@@ -24,18 +33,11 @@ class User(object):
         return json.dumps(self.__dict__)
 
     def write(self):
-        filename = config_file
-        with open(filename, 'w') as f:
+        with open(self.filename, 'w') as f:
             json.dump(self.__dict__, f)
 
-    def load(filename):
-        try:
-            with open(filename, 'r') as f:
-                dictionary = json.load(f)
-                return User(dictionary["adminapi"], dictionary["orgID"], dictionary["userID"], dictionary["firstname"], dictionary["lastname"], dictionary["email"], dictionary["phone"])
-        except:
-            return None
-
-    def delete(filename):
-        if os.path.exists(filename):
-            os.remove(filename)
+    def delete(self):
+        global user_singleton
+        if os.path.exists(self.filename):
+            os.remove(self.filename)
+            user_singleton = None
