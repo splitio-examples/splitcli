@@ -48,5 +48,5 @@ def selection_kill_split():
             workspace_id, environment_name, split_name)
         print(colored(f"You killed {split_name}. RIP.", "red"))
     except Exception as exc:
-        print("Could not create Split")
+        print("Could not kill Split")
         print(exc)
