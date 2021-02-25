@@ -11,14 +11,18 @@ def split_action_url(workspace_id, split_name, environment_name, action):
 
 # Split in Environment
 
-def get_split_definition(workspace_id, split_name, environment_name):
+def get_split_definition(workspace_id, environment_name, split_name):
     path = split_url(workspace_id, split_name, environment_name)
     return http_client.get(path)
 
-def create_split_in_environment(workspace_id, environment_name, split_name, split_dataa):
+def create_split_in_environment(workspace_id, environment_name, split_name, split_data):
     path = split_url(workspace_id, split_name, environment_name)
-    result = http_client.post(path, split_dataa)
+    result = http_client.post(path, split_data)
     return result
+
+def delete_definition(workspace_id, environment_name, split_name):
+  path = split_url(workspace_id, split_name, environment_name)
+  http_client.delete(path)
 
 def kill_split_in_environment(workspace_id, environment_name, split_name):
     path = split_action_url(workspace_id, split_name, environment_name, "kill")

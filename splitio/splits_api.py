@@ -21,11 +21,14 @@ def list_splits(workspace_id):
     # Stop once a batch is smaller than the limit
     while len(all_splits) % limit == 0:
         result = list_splits_batch(workspace_id, offset, limit)
-        all_splits.append(result)
+        if len(result) != 0:
+            all_splits.extend(result)
+        else:
+            break
     return all_splits
 
 def list_splits_batch(workspace_id, offset, limit):
-    path = split_base_url(workspace_id) + "?offset={offset}&limit={limit}"
+    path = split_base_url(workspace_id) + f"?offset={offset}&limit={limit}"
     return http_client.get(path)['objects']
 
 def create_split(workspace_id, traffic_type_name, split_name, split_description):

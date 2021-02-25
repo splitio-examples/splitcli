@@ -32,30 +32,20 @@ def initial_prompt():
         newUserPrompt()
 
 def knownUserPrompt(user):
-    print(colored(text2art(f"Hi {user.firstname}!!"), 'cyan'))
-    print(colored("1. Create a Split", 'green'))
-    print(colored("2. Ramp a Split", 'yellow'))
-    print(colored("3. Kill a Split", 'red'))
-    print(colored("4. Promote a Split", 'blue'))
-    print(colored("5. Log Out", 'white'))
-    print(colored("6. Exit", 'white'))
-    selection = input(colored("Selection: ", "cyan"))
-    if selection == "1":
-        selection_create_split()
-    elif selection == "2":
-        selection_create_split()
-    elif selection == "3":
-        selection_kill_split()
-    elif selection == "4":
-        selection_create_split()
-    elif selection == "5":
-        user.delete()
-        initial_prompt()
-    elif selection == "6":
-        exit()
-    else:
-        print(f"Invalid selection: {selection}")
-        initial_prompt()
+    options = [
+        { "name": "Manage Splits", "operation": manage_splits },
+        { "name": "Log Out", "operation": lambda: logout(user) },
+        { "name": "Exit", "operation": exit }
+    ]
+    title = text2art(f"Hi {user.firstname}!!")
+    selection,_ = pick(options, title, options_map_func=lambda x: x['name'])
+    selection['operation']()
+
+    initial_prompt()
+
+def logout(user):
+    user.delete()
+    initial_prompt()
 
 def newUserPrompt():
     print("Welcome to Split! Do you have an existing account?")

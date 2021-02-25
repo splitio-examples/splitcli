@@ -7,7 +7,6 @@ from accounts.user import get_user
 
 base_url = "https://api.split.io/internal/api/v2"
 
-# enable_debug()
 
 def get(path):
     response = requests.get(f"{base_url}/{path}", headers=headers())
@@ -19,11 +18,11 @@ def delete(path):
 
 def post(path, content):
     response = requests.post(f"{base_url}/{path}", headers=headers(), json=content)
-    return handle_response(response)
+    return handle_response(response, content)
 
 def put(path, content):
     response = requests.put(f"{base_url}/{path}", headers=headers(), json=content)
-    return handle_response(response)
+    return handle_response(response, content)
 
 def headers():
     user = get_user()
@@ -35,12 +34,12 @@ def headers():
         'Authorization': "Bearer " + admin_api_key
     }
 
-def handle_response(response):
+def handle_response(response, payload=None):
     if response.status_code != 200:
         url = response.url
         status_code = str(response.status_code)
         result = str(response.json())
-        raise RuntimeError(f"Error with request: url={url} code={status_code} result={result}")
+        raise RuntimeError(f"Error with request: url={url} payload={payload} code={status_code} result={result}")
     return response.json()
 
 def enable_debug():
@@ -51,3 +50,5 @@ def enable_debug():
     requests_log = logging.getLogger("requests.packages.urllib3")
     requests_log.setLevel(logging.DEBUG)
     requests_log.propagate = True
+
+enable_debug()
