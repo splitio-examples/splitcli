@@ -1,11 +1,12 @@
 from termcolor import colored
-from art import *
+from art import text2art
+from pick import pick
 
-from selectors.split_selectors import *
+from selectors.split_selectors import manage_splits
 from accounts.user import get_user
 from accounts import signup
 
-# def signin():
+# def sign_in():
 #     split_apikey = input("Enter Your Split API Key")
 #     signin_response = requests.post('SPLITSIGNIN URL', json={"fields": [
 #         {
@@ -57,7 +58,7 @@ def newUserPrompt():
         signup.create_account()
         initial_prompt()
     elif selection == "2":
-        sign_in()
+        # sign_in()
         initial_prompt()
     elif selection == "3":
         exit()

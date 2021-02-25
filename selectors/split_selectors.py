@@ -98,14 +98,14 @@ def manage_definition(workspace, split, environment):
 
 def get_definition(workspace, split, environment):
     try:
-        return definitions_api.get_split_definition(workspace["id"], environment["name"], split["name"])
-    except Exception as exc:
+        return definitions_api.get(workspace["id"], environment["name"], split["name"])
+    except Exception as _:
         return None
 
 def delete_definition(workspace, split, environment):
     title = "Are you sure?"
     options = [
-        { "option_name": "Yes", "operation": lambda: definitions_api.delete_definition(workspace["id"], environment["name"], split["name"]) },
+        { "option_name": "Yes", "operation": lambda: definitions_api.delete(workspace["id"], environment["name"], split["name"]) },
         { "option_name": "No", "go_back": True }
     ]
     select(title, options)
@@ -122,27 +122,28 @@ def select_rollout():
 def create_definition(workspace, split, environment):
     try:
         split_data = select_rollout()
-        definitions_api.create_split_in_environment(workspace["id"], environment["name"], split["name"], split_data)
+        definitions_api.create(workspace["id"], environment["name"], split["name"], split_data)
         output_message("Your definition has been created!")
     except Exception as exc:
         output_message("Could not create Split\n" + str(exc))
 
 def kill_definition(workspace, split, environment):
     try:
-        definitions_api.kill_split_in_environment(workspace["id"], environment["name"], split["name"])
+        definitions_api.kill(workspace["id"], environment["name"], split["name"])
         output_message(f"You killed " + split["name"] + " in " + environment["name"] + ". RIP.")
     except Exception as exc:
         output_message("Could not kill Split\n" + str(exc))
 
 def restore_definition(workspace, split, environment):
     try:
-        definitions_api.restore_split_in_environment(workspace["id"], environment["name"], split["name"])
+        definitions_api.restore(workspace["id"], environment["name"], split["name"])
         output_message(f"You restored " + split["name"] + " in " + environment["name"] + ". It's Alive!!")
     except Exception as exc:
         output_message("Could not restore Split\n" + str(exc))
 
 def promote_definition(workspace, split, environment):
-    split_name = input("Enter the name of the Split you wish to promote: ")
+    # split_name = input("Enter the name of the Split you wish to promote: ")
+    pass
 
 def option_unavailable():
     output_message("Option unavailable", "Back")
