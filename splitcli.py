@@ -1,11 +1,12 @@
 from termcolor import colored
-from art import *
+from art import text2art
+from pick import pick
 
-from selectors.split_selectors import *
+from selectors.split_selectors import manage_splits
 from accounts.user import get_user
 from accounts import signup
 
-# def signin():
+# def sign_in():
 #     split_apikey = input("Enter Your Split API Key")
 #     signin_response = requests.post('SPLITSIGNIN URL', json={"fields": [
 #         {
@@ -32,30 +33,20 @@ def initial_prompt():
         newUserPrompt()
 
 def knownUserPrompt(user):
-    print(colored(text2art(f"Hi {user.firstname}!!"), 'cyan'))
-    print(colored("1. Create a Split", 'green'))
-    print(colored("2. Ramp a Split", 'yellow'))
-    print(colored("3. Kill a Split", 'red'))
-    print(colored("4. Promote a Split", 'blue'))
-    print(colored("5. Log Out", 'white'))
-    print(colored("6. Exit", 'white'))
-    selection = input(colored("Selection: ", "cyan"))
-    if selection == "1":
-        selection_create_split()
-    elif selection == "2":
-        selection_create_split()
-    elif selection == "3":
-        selection_kill_split()
-    elif selection == "4":
-        selection_create_split()
-    elif selection == "5":
-        user.delete()
-        initial_prompt()
-    elif selection == "6":
-        exit()
-    else:
-        print(f"Invalid selection: {selection}")
-        initial_prompt()
+    options = [
+        { "name": "Manage Splits", "operation": manage_splits },
+        { "name": "Log Out", "operation": lambda: logout(user) },
+        { "name": "Exit", "operation": exit }
+    ]
+    title = text2art(f"Hi {user.firstname}!!")
+    selection,_ = pick(options, title, options_map_func=lambda x: x['name'])
+    selection['operation']()
+
+    initial_prompt()
+
+def logout(user):
+    user.delete()
+    initial_prompt()
 
 def newUserPrompt():
     print("Welcome to Split! Do you have an existing account?")
@@ -67,7 +58,7 @@ def newUserPrompt():
         signup.create_account()
         initial_prompt()
     elif selection == "2":
-        sign_in()
+        # sign_in()
         initial_prompt()
     elif selection == "3":
         exit()
