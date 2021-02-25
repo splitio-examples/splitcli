@@ -17,6 +17,13 @@ def load_user():
     except:
         return None
 
+def sign_in():
+    firstname = input("Enter your first name: ")
+    split_apikey = input("Enter a Split Admin API Token: ")
+    user = User(split_apikey, "", "", firstname, "", "")
+    user.write()
+    return user
+
 class User(object):    
     def __init__(self, adminapi: str, orgID: str, userID: str, firstname: str, lastname: str, email: str):
         self.adminapi = adminapi

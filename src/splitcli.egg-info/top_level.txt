@@ -1,5 +1,5 @@
 accounts
-globals
-selectors
+config
 splitio
+splitio_selectors
 templates
