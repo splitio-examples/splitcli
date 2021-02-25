@@ -41,14 +41,3 @@ def handle_response(response, payload=None):
         result = str(response.json())
         raise RuntimeError(f"Error with request: url={url} payload={payload} code={status_code} result={result}")
     return response.json()
-
-def enable_debug():
-    internal_http_client.HTTPConnection.debuglevel = 1
-    # You must initialize logging, otherwise you'll not see debug output.
-    logging.basicConfig()
-    logging.getLogger().setLevel(logging.DEBUG)
-    requests_log = logging.getLogger("requests.packages.urllib3")
-    requests_log.setLevel(logging.DEBUG)
-    requests_log.propagate = True
-
-enable_debug()
