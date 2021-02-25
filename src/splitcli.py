@@ -20,13 +20,11 @@ SPLIT_CLI_BACKEND_BASE_URL = f"{SPLIT_CLI_BACKEND_URI}{SPLIT_CLI_BACKEND_API_URI
 #     ]})
 #     signin_response.status_code
 #     signin_response.json()
-
 #     if signin_response.status_code != 200:
 #         print(signin_response.json())
 #     else:
 #         print("You are signed in")
 #         initial_prompt()
-
 
 def initial_prompt():
     user = get_user()
