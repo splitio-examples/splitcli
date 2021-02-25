@@ -1,18 +1,28 @@
 import requests
 import json
+import logging
+import http.client as internal_http_client
 
 from accounts.user import get_user
 
 base_url = "https://api.split.io/internal/api/v2"
 
+
 def get(path):
     response = requests.get(f"{base_url}/{path}", headers=headers())
     return handle_response(response)
 
+def delete(path):
+    response = requests.delete(f"{base_url}/{path}", headers=headers())
+    handle_response(response)
+
 def post(path, content):
-    print(json.dumps(content))
-    response = requests.post(f"{base_url}/{path}", headers=headers(), data=content)
-    return handle_response(response)
+    response = requests.post(f"{base_url}/{path}", headers=headers(), json=content)
+    return handle_response(response, content)
+
+def put(path, content):
+    response = requests.put(f"{base_url}/{path}", headers=headers(), json=content)
+    return handle_response(response, content)
 
 def headers():
     user = get_user()
@@ -24,10 +34,21 @@ def headers():
         'Authorization': "Bearer " + admin_api_key
     }
 
-def handle_response(response):
+def handle_response(response, payload=None):
     if response.status_code != 200:
         url = response.url
         status_code = str(response.status_code)
         result = str(response.json())
-        raise RuntimeError(f"Error with request: url={url} code={status_code} result={result}")
+        raise RuntimeError(f"Error with request: url={url} payload={payload} code={status_code} result={result}")
     return response.json()
+
+def enable_debug():
+    internal_http_client.HTTPConnection.debuglevel = 1
+    # You must initialize logging, otherwise you'll not see debug output.
+    logging.basicConfig()
+    logging.getLogger().setLevel(logging.DEBUG)
+    requests_log = logging.getLogger("requests.packages.urllib3")
+    requests_log.setLevel(logging.DEBUG)
+    requests_log.propagate = True
+
+enable_debug()
