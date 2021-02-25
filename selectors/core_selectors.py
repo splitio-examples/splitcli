@@ -1,4 +1,4 @@
-from splitio import workspaces
+from splitio import workspaces_api
 
 def selection_environment():
     # todo: add selection
@@ -10,7 +10,7 @@ def selection_traffic_type():
 
 def selection_workspace():
     # todo: add selection
-    workspace = workspaces.get_workspace('Default')
+    workspace = workspaces_api.get_workspace('Default')
     if workspace == None:
         print("ERROR")
         return None

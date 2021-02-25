@@ -1,8 +1,16 @@
 from termcolor import colored
+from pick import pick
 
-from splitio import splits
+from splitio import splits_api
+from splitio import definitions_api
 from templates import split_templates
 from selectors import core_selectors
+
+def select_split(workspace_id):
+    splits = splits_api.list_splits(workspace_id)
+    title = "Select Split to Manage"
+    split = pick(splits, title, )
+
 
 def selection_split_type():
     print("Select the type of Split")
@@ -12,10 +20,10 @@ def selection_split_type():
         return split_templates.toggleSplit("Create via Split CLI")
 
 def selection_get_split():
-    environment_name = selection_environment()
-    workspace_id = selection_workspace()['id']
+    environment_name = core_selectors.selection_environment()
+    workspace_id = core_selectors.selection_workspace()['id']
     split_name = input("Enter a name for your Split: ")
-    return splits.get_split(workspace_id, split_name, environment_name)
+    return definitions_api.get_split_definition(workspace_id, split_name, environment_name)
 
 def selection_create_split():
     try:
@@ -28,9 +36,9 @@ def selection_create_split():
         
         split_data = selection_split_type()
 
-        splits.create_split(workspace_id, traffic_type_name,
+        splits_api.create_split(workspace_id, traffic_type_name,
                      split_name, split_description)
-        splits.create_split_in_environment(
+        definitions_api.create_split_in_environment(
             workspace_id, environment_name, split_name, split_data)
         print(colored("Your Split has been created!", "green"))
     except Exception as exc:
@@ -44,7 +52,7 @@ def selection_kill_split():
         environment_name = core_selectors.selection_environment()
         workspace_id = core_selectors.selection_workspace()['id']
 
-        splits.kill_split_in_environment(
+        definitions_api.kill_split_in_environment(
             workspace_id, environment_name, split_name)
         print(colored(f"You killed {split_name}. RIP.", "red"))
     except Exception as exc:
