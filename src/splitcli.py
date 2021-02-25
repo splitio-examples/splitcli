@@ -1,14 +1,12 @@
 from termcolor import colored
 from art import text2art
 from pick import pick
+import sys
 
-from selectors.split_selectors import manage_splits
+from splitio_selectors.split_selectors import manage_splits
 from accounts.user import get_user
 from accounts import signup
-
-SPLIT_CLI_BACKEND_URI = "https://split-cli-backend.herokuapp.com"
-SPLIT_CLI_BACKEND_API_URI = "/api/v1"
-SPLIT_CLI_BACKEND_BASE_URL = f"{SPLIT_CLI_BACKEND_URI}{SPLIT_CLI_BACKEND_API_URI}"
+import config
 
 # def sign_in():
 #     split_apikey = input("Enter Your Split API Key")
@@ -74,15 +72,5 @@ def main():
     if sys.version_info.major < major_required or sys.version_info.minor < minor_required:
         print(f"Minimum version requirement is: {major_required}.{minor_required}. Your version is: {sys.version_info.major}.{sys.version_info.minor}")
         exit()
-
-    parser = argparse.ArgumentParser(description='optional baseUrl')
-    parser.add_argument('--baseUrl', help='optional base url')
-    args = parser.parse_args()
-    if args.baseUrl is not None:
-        global SPLIT_CLI_BACKEND_URI
-        global SPLIT_CLI_BACKEND_BASE_URL
-        SPLIT_CLI_BACKEND_URI = args.baseUrl
-        SPLIT_CLI_BACKEND_BASE_URL = f"{SPLIT_CLI_BACKEND_URI}{SPLIT_CLI_BACKEND_API_URI}"
-        print(f"Working with base url: {SPLIT_CLI_BACKEND_URI}")
 
     initial_prompt()

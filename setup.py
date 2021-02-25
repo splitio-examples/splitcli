@@ -16,7 +16,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/splitio-examples/splitcli',
-    author='Talia Nassi & Micah Silverman',
+    author='Henry Jewkes &  Talia Nassi & Micah Silverman',
     author_email='info@split.io',
     classifiers=[  # Optional
         'Development Status :: 3 - Alpha',
