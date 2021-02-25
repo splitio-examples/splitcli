@@ -1,6 +1,7 @@
 import json
 import os
 import config
+from getpass import getpass
 
 user_singleton = None
 def get_user():
@@ -19,7 +20,7 @@ def load_user():
 
 def sign_in():
     firstname = input("Enter your first name: ")
-    split_apikey = input("Enter a Split Admin API Token: ")
+    split_apikey = getpass("Enter a Split Admin API Token: ")
     user = User(split_apikey, "", "", firstname, "", "")
     user.write()
     return user
