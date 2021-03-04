@@ -1,8 +1,6 @@
 import inquirer
 
-def colored(text, color_name):
-    color = split_color(color_name)
-    return color + text + split_color("white")
+from ux.text import colored, split_color
 
 def output_message(message, option="Continue"):
     print(colored(message,"yellow"))
@@ -43,17 +41,5 @@ def split_theme():
         "List": {"selection_color": split_color("light_blue"), "selection_cursor": ">"},
     }
     return inquirer.themes.load_theme_from_dict(theme_dict)
-
-def split_color(color_name):
-    return split_colors.get(color_name, color_name)
-
-split_colors = {
-    "white": "\u001b[38;5;231m",
-    "black": "\u001b[38;5;236",
-    "dark_blue": "\u001b[38;5;26m",
-    "light_blue": "\u001b[38;5;45m",
-    "green": "\u001b[38;5;43m",
-    "yellow": "\u001b[38;5;220m"
-}
 
 theme = split_theme()
