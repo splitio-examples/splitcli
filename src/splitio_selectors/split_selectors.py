@@ -23,7 +23,7 @@ def manage_splits():
         for split in splits:
             option = split
             option["option_name"] = split["name"]
-            option["operation"] = lambda: manage_split(workspace, split)
+            option["operation"] = lambda bound_split=split: manage_split(workspace, bound_split)
             options.append(option)
         options.append({"option_name": "Create a new split",
                         "operation": lambda: create_split(workspace)})
