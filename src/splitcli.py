@@ -1,12 +1,12 @@
 from termcolor import colored
 from art import text2art
-from ux.menu import select_operation
 import sys
 
 from splitio_selectors.split_selectors import manage_splits
 from accounts.user import get_user, sign_in
 from accounts import signup
 import config
+from ux.menu import select_operation, output_message
 
 
 def initial_prompt():
@@ -19,7 +19,7 @@ def initial_prompt():
             newUserPrompt()
 
 def knownUserPrompt(user):
-    print(text2art(f"Hi {user.firstname}!!!"))
+    output_message(text2art(f"Hi {user.firstname}!!!"))
     options = [
         {"option_name": "Manage Splits", "operation": manage_splits},
         {"option_name": "Log Out", "operation": lambda: user.delete()},
@@ -29,7 +29,7 @@ def knownUserPrompt(user):
     select_operation(title, options)
 
 def newUserPrompt():
-    print(text2art(f"Welcome to Split!"))
+    output_message(text2art(f"Welcome to Split!"))
     options = [
         {"option_name": "No, I need to create an account",
             "operation": lambda: signup.create_account()},
@@ -44,7 +44,7 @@ def main():
     minor_required = 6
 
     if sys.version_info.major < major_required or sys.version_info.minor < minor_required:
-        print(
+        output_message(
             f"Minimum version requirement is: {major_required}.{minor_required}. Your version is: {sys.version_info.major}.{sys.version_info.minor}")
         exit()
 

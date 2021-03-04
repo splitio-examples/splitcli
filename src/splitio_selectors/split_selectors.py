@@ -5,7 +5,7 @@ import json
 from splitio import splits_api, definitions_api, environments_api
 from templates import split_templates
 from splitio_selectors import core_selectors
-
+from ux.menu import text_input
 
 def manage_splits():
     workspace = core_selectors.selection_workspace()
@@ -34,11 +34,10 @@ def manage_splits():
         if go_back:
             return
 
-
 def create_split(workspace):
     try:
-        split_name = input("Enter a name for your Split: ")
-        split_description = input("Enter a description for your Split: ")
+        split_name = text_input("Enter a name for your Split: ")
+        split_description = text_input("Enter a description for your Split: ")
         traffic_type = core_selectors.selection_traffic_type(workspace["id"])
 
         splits_api.create_split(
