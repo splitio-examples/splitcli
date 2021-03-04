@@ -1,11 +1,9 @@
-from termcolor import colored
-from ux.menu import output_message, select_operation
 import json
 
 from splitio import splits_api, definitions_api, environments_api
 from templates import split_templates
 from splitio_selectors import core_selectors
-from ux.menu import text_input
+from ux.menu import option_unavailable, output_message, select_operation, text_input
 
 def manage_splits():
     workspace = core_selectors.selection_workspace()
@@ -16,9 +14,9 @@ def manage_splits():
         print("Workspace: " + workspace["name"])
         title = ""
         if len(splits) == 0:
-            title += "No Splits exist yet!"
+            title += "No splits exist yet"
         else:
-            title += "Select Split to Manage"
+            title += "Select split to Manage"
 
         options = []
         for split in splits:
@@ -36,15 +34,15 @@ def manage_splits():
 
 def create_split(workspace):
     try:
-        split_name = text_input("Enter a name for your Split: ")
-        split_description = text_input("Enter a description for your Split: ")
+        split_name = text_input("Enter a name for your split: ")
+        split_description = text_input("Enter a description for your split: ")
         traffic_type = core_selectors.selection_traffic_type(workspace["id"])
 
         splits_api.create_split(
             workspace["id"], traffic_type["name"], split_name, split_description)
-        output_message("Your Split has been created!")
+        output_message("Your split has been created!")
     except Exception as exc:
-        output_message("Could not create Split\n" + str(exc))
+        output_message("Could not create split\n" + str(exc))
 
 
 def manage_split(workspace, split):
@@ -62,10 +60,10 @@ def manage_split(workspace, split):
             option["operation"] = lambda bound_option=option: manage_definition(
                 workspace, split, bound_option)
             options.append(option)
-        options.append({"option_name": "Delete Split", "operation": lambda: delete_split(
+        options.append({"option_name": "Delete split", "operation": lambda: delete_split(
             workspace, split), "go_back": True})
         options.append({"option_name": "Go back", "go_back": True})
-        title = "Managing Split: " + split["name"]
+        title = "Managing split: " + split["name"]
 
         _, go_back = select_operation(title, options)
         if go_back:
@@ -132,7 +130,7 @@ def select_rollout():
     title = "Select the type of rollout"
     options = [
         {"option_name": "Toggled Rollout - Basic on/off feature flag",
-            "operation": lambda: split_templates.toggleSplit("Create via Split CLI")},
+            "operation": lambda: split_templates.toggle_split("Create via Split CLI")},
         {"option_name": "Ramped Rollout - Incrementally release your feature through a percentage rollout",
             "operation": option_unavailable}
     ]
@@ -147,7 +145,7 @@ def create_definition(workspace, split, environment):
             workspace["id"], environment["name"], split["name"], split_data)
         output_message("Your definition has been created!")
     except Exception as exc:
-        output_message("Could not create Split\n" + str(exc))
+        output_message("Could not create split\n" + str(exc))
 
 
 def kill_definition(workspace, split, environment):
@@ -157,8 +155,7 @@ def kill_definition(workspace, split, environment):
         output_message(f"You killed " +
                        split["name"] + " in " + environment["name"] + ". RIP.")
     except Exception as exc:
-        output_message("Could not kill Split\n" + str(exc))
-
+        output_message("Could not kill split\n" + str(exc))
 
 def restore_definition(workspace, split, environment):
     try:
@@ -167,13 +164,4 @@ def restore_definition(workspace, split, environment):
         output_message(
             f"You restored " + split["name"] + " in " + environment["name"] + ". It's Alive!!")
     except Exception as exc:
-        output_message("Could not restore Split\n" + str(exc))
-
-
-def promote_definition(workspace, split, environment):
-    # split_name = input("Enter the name of the Split you wish to promote: ")
-    pass
-
-
-def option_unavailable():
-    output_message("Option unavailable", "Back")
+        output_message("Could not restore split\n" + str(exc))
