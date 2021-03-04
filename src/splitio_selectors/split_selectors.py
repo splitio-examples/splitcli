@@ -1,5 +1,5 @@
 from termcolor import colored
-from pick import pick
+from ux.menu import output_message, select_operation
 import json
 
 from splitio import splits_api, definitions_api, environments_api
@@ -13,7 +13,8 @@ def manage_splits():
     while True:
         splits = splits_api.list_splits(workspace["id"])
 
-        title = "Workspace: " + workspace["name"] + "\n"
+        print("Workspace: " + workspace["name"])
+        title = ""
         if len(splits) == 0:
             title += "No Splits exist yet!"
         else:
@@ -29,7 +30,7 @@ def manage_splits():
                         "operation": lambda: create_split(workspace)})
         options.append({"option_name": "Go back", "go_back": True})
 
-        _, go_back = select(title, options)
+        _, go_back = select_operation(title, options)
         if go_back:
             return
 
@@ -68,7 +69,7 @@ def manage_split(workspace, split):
         options.append({"option_name": "Go back", "go_back": True})
         title = "How can we help you with " + split["name"]
 
-        _, go_back = select(title, options)
+        _, go_back = select_operation(title, options)
         if go_back:
             return
 
@@ -80,7 +81,7 @@ def delete_split(workspace, split):
             workspace["id"], split["name"])},
         {"option_name": "No", "go_back": True}
     ]
-    select(title, options)
+    select_operation(title, options)
 
 
 def manage_definition(workspace, split, environment):
@@ -107,7 +108,7 @@ def manage_definition(workspace, split, environment):
                 workspace, split, environment)})
             options.append({"option_name": "Go back", "go_back": True})
 
-        _, go_back = select(title, options)
+        _, go_back = select_operation(title, options)
         if go_back:
             return
 
@@ -126,7 +127,7 @@ def delete_definition(workspace, split, environment):
             workspace["id"], environment["name"], split["name"])},
         {"option_name": "No", "go_back": True}
     ]
-    select(title, options)
+    select_operation(title, options)
 
 
 def select_rollout():
@@ -137,7 +138,7 @@ def select_rollout():
         {"option_name": "Ramped Rollout - Incrementally release your feature through a percentage rollout",
             "operation": option_unavailable}
     ]
-    selection, _ = select(title, options)
+    selection, _ = select_operation(title, options)
     return selection
 
 
@@ -178,16 +179,3 @@ def promote_definition(workspace, split, environment):
 
 def option_unavailable():
     output_message("Option unavailable", "Back")
-
-# TODO: Replace pick with something that integrates more seamlessly with users entering data
-
-
-def output_message(message, option="Continue"):
-    pick([option], message)
-
-
-def select(title, options):
-    selection, _ = pick(
-        options, title, options_map_func=lambda x: x["option_name"])
-    result = selection["operation"]() if "operation" in selection else None
-    return (result, selection.get("go_back", False))

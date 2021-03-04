@@ -33,7 +33,7 @@ setup(
     package_dir={'': 'src'},  # Optional
     packages=find_packages(where='src'),
     python_requires='>=3.6, <4',
-    install_requires=['requests', 'termcolor', 'pick', 'python-decouple', 'art'],
+    install_requires=['requests', 'termcolor', 'python-inquirer', 'art'],
     extras_require={  # Optional
         'dev': ['check-manifest'],
         'test': ['coverage'],
