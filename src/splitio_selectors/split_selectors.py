@@ -34,7 +34,6 @@ def manage_splits():
         if go_back:
             return
 
-
 def create_split(workspace):
     try:
         split_name = text_input("Enter a name for your Split: ")
