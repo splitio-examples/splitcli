@@ -1,7 +1,7 @@
 from splitio import workspaces_api
 from splitio import environments_api
 from splitio import traffic_types_api
-from pick import pick
+from ux.menu import select
 
 
 def selection_environment(workspace_id):
@@ -9,8 +9,9 @@ def selection_environment(workspace_id):
     if len(environments) == 1:
         environment = environments[0]["name"]
         return environments[0]
+    
     title = 'Please select your environment'
-    environment,_ = pick(environments, title, options_map_func=lambda env: env['name'])
+    environment,_ = select(title, environments, name_field="name")
     return environment
 
 def selection_traffic_type(workspace_id):
@@ -19,7 +20,7 @@ def selection_traffic_type(workspace_id):
         traffic_type = traffic_types[0]["name"]
         return traffic_types[0]
     title = 'Please select your traffic type'
-    traffic_type,_ = pick(traffic_types, title, options_map_func=lambda tt: tt['name'])
+    traffic_type,_ = select(title, traffic_types, name_field="name")
     return traffic_type
 
 def selection_workspace():
@@ -28,5 +29,5 @@ def selection_workspace():
         workspace = workspaces[0]["name"]
         return workspaces[0]
     title = 'Please select your workspace'
-    workspace,_ = pick(workspaces, title, options_map_func=lambda ws: ws['name'])
+    workspace,_ = select(title, workspaces, name_field="name")
     return workspace

@@ -1,6 +1,6 @@
 from termcolor import colored
 from art import text2art
-from pick import pick
+from ux.menu import select_operation
 import sys
 
 from splitio_selectors.split_selectors import manage_splits
@@ -18,31 +18,26 @@ def initial_prompt():
         else:
             newUserPrompt()
 
-
 def knownUserPrompt(user):
-
+    print(text2art(f"Hi {user.firstname}!!!"))
     options = [
-        {"name": "Manage Splits", "operation": manage_splits},
-        {"name": "Log Out", "operation": lambda: user.delete()},
-        {"name": "Exit", "operation": exit}
+        {"option_name": "Manage Splits", "operation": manage_splits},
+        {"option_name": "Log Out", "operation": lambda: user.delete()},
+        {"option_name": "Exit", "operation": exit}
     ]
-
-    title = text2art(f"Hi {user.firstname}!!!")
-    selection, _ = pick(options, title, options_map_func=lambda x: x['name'])
-    selection['operation']()
-
+    title = "Select"
+    select_operation(title, options)
 
 def newUserPrompt():
+    print(text2art(f"Welcome to Split!"))
     options = [
-        {"name": "No, I need to create an account",
+        {"option_name": "No, I need to create an account",
             "operation": lambda: signup.create_account()},
-        {"name": "Yes, take me to sign in", "operation": lambda: sign_in()},
-        {"name": "Exit", "operation": exit}
+        {"option_name": "Yes, take me to sign in", "operation": lambda: sign_in()},
+        {"option_name": "Exit", "operation": exit}
     ]
-    title = f"Welcome to Split! Do you have an existing account?"
-    selection, _ = pick(options, title, options_map_func=lambda x: x['name'])
-    selection['operation']()
-
+    title = f"Do you have an existing account?"
+    select_operation(title, options)
 
 def main():
     major_required = 3
@@ -54,6 +49,5 @@ def main():
         exit()
 
     initial_prompt()
-
 
 main()
