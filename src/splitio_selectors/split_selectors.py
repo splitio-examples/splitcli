@@ -59,14 +59,13 @@ def manage_split(workspace, split):
                 option["option_name"] = "Create in " + option["name"]
             else:
                 option["option_name"] = "Manage in " + option["name"]
-            option["operation"] = lambda: manage_definition(
-                workspace, split, option)
-            option["definition"] = definition
+            option["operation"] = lambda bound_option=option: manage_definition(
+                workspace, split, bound_option)
             options.append(option)
         options.append({"option_name": "Delete Split", "operation": lambda: delete_split(
             workspace, split), "go_back": True})
         options.append({"option_name": "Go back", "go_back": True})
-        title = "How can we help you with " + split["name"]
+        title = "Managing Split: " + split["name"]
 
         _, go_back = select(title, options)
         if go_back:
