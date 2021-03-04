@@ -1,15 +1,16 @@
 import requests
 import config
 
+from ux.menu import text_input, output_message
 from accounts.user import User
 
 
 def verify_and_complete(firstname, lastname, email):
-    confirmation_code = input(
+    confirmation_code = text_input(
         "Please enter the 6 digit confirmation code sent to your phone: "
     )
-    print("Processing account creation...")
-    print("This could take up to one minute.")
+    output_message("Processing account creation...")
+    output_message("This could take up to one minute.")
     # TODO - validate confirmation code is a 6-digit number
     verify_response = requests.post(
         f"{config.SPLIT_CLI_BACKEND_BASE_URL}/verify-and-complete", json={"fields": [
@@ -23,12 +24,12 @@ def verify_and_complete(firstname, lastname, email):
 
 
 def create_account():
-    firstname = input("Enter Your First Name: ")
-    lastname = input("Enter Your Last Name: ")
-    email = input("Enter Your Email Address: ")
-    phone = input("Enter Your 10 Digit Phone Number: ")
+    firstname = text_input("Enter Your First Name: ")
+    lastname = text_input("Enter Your Last Name: ")
+    email = text_input("Enter Your Email Address: ")
+    phone = text_input("Enter Your 10 Digit Phone Number: ")
 
-    print("Setting up your account...")
+    output_message("Setting up your account...")
     create_response = requests.post(
         f"{config.SPLIT_CLI_BACKEND_BASE_URL}/create-and-enroll-user", json={"fields": [
             {"name": "firstname", "value": firstname},
@@ -38,7 +39,7 @@ def create_account():
         ]})
 
     if create_response.status_code != 200:
-        print(create_response.json())
+        output_message(create_response.json())
         exit()
 
     create_response_json = create_response.json()
@@ -47,10 +48,10 @@ def create_account():
         verify_response = verify_and_complete(firstname, lastname, email)
         status = verify_response.status_code
         if (status == 403):
-            print("Incorrect confirmation code. Please try again")
+            output_message("Incorrect confirmation code. Please try again")
 
     if verify_response.status_code != 200:
-        print(verify_response.json())
+        output_message(verify_response.json())
         exit()
 
     verify_response_json = verify_response.json()
@@ -61,6 +62,6 @@ def create_account():
     )
     user.write()
     password = verify_response_json["password"]
-    print(f"\nYour admin api key has been written to: {config.config_file}.")
-    print(f"Your email is: {email} and your assigned password is: {password}.")
-    print("Make note of your password as it will not be repeated. You can change your password by logging in to: https://app.split.io")
+    output_message(f"\nYour admin api key has been written to: {config.config_file}.")
+    output_message(f"Your email is: {email} and your assigned password is: {password}.")
+    output_message("Make note of your password as it will not be repeated. You can change your password by logging in to: https://app.split.io")

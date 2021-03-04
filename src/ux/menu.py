@@ -22,3 +22,13 @@ def select_operation(title, options, name_field="option_name"):
     selection = answers['result']
     result = selection["operation"]() if "operation" in selection else None
     return (result, selection.get("go_back", False))
+
+def text_input(title):
+    questions = [ inquirer.Text('result',message=title) ]
+    answers = inquirer.prompt(questions)
+    return answers["result"]
+
+def password_input(title):
+    questions = [ inquirer.Password('result',message=title) ]
+    answers = inquirer.prompt(questions)
+    return answers["result"]
