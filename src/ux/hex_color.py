@@ -2,8 +2,11 @@ import re
 import math
 
 # Credit to this Stack Overflow post: https://stackoverflow.com/questions/11765623/convert-hex-to-closest-x11-color-number/31057489
+colors_16 = {
 
-colors = {
+}
+
+colors_256 = {
     '000000':  '16', '00005f':  '17', '000087':  '18', '0000af':  '19', '0000d7':  '20',
     '0000ff':  '21', '005f00':  '22', '005f5f':  '23', '005f87':  '24', '005faf':  '25',
     '005fd7':  '26', '005fff':  '27', '008700':  '28', '00875f':  '29', '008787':  '30',
@@ -76,12 +79,16 @@ def color_distance(c1, c2):
     db = c1b - c2b
     return dr*dr + dg*dg + db*db
 
-def best_match(hexval):
+def best_match(hexval, colors):
     best = None
     bestdist = 0.0
-    for key in colors.keys():
+    for key in colors_256.keys():
         dist = color_distance(hexval, key)
         if best is None or dist < bestdist:
-            best = colors[key]
+            best = colors_256[key]
             bestdist = dist
+    return best
+
+def match_256(hexval):
+    best = best_match(hexval, colors_256)
     return f"\u001b[38;5;{best}m"
