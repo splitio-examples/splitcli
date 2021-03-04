@@ -1,7 +1,7 @@
-def toggleSplit(comment):
-    return rampSplit(0, comment)
+def toggle_split(comment):
+    return ramp_split(0, comment)
 
-def rampSplit(ramp, comment):
+def ramp_split(ramp, comment):
     return {
         "treatments": [
             {

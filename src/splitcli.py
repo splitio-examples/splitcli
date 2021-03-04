@@ -1,8 +1,10 @@
-from termcolor import colored
 from art import text2art
 import sys
 
 from splitio_selectors.split_selectors import manage_splits
+from splitio_selectors.segment_selectors import manage_segments
+from splitio_selectors.metric_selectors import manage_metrics
+from splitio_selectors.organization_selectors import manage_organization
 from accounts.user import get_user, sign_in
 from accounts import signup
 import config
@@ -22,6 +24,9 @@ def knownUserPrompt(user):
     output_message(text2art(f"Hi {user.firstname}!!!"))
     options = [
         {"option_name": "Manage Splits", "operation": manage_splits},
+        {"option_name": "Manage Segments", "operation": manage_segments},
+        {"option_name": "Manage Metrics", "operation": manage_metrics},
+        {"option_name": "Manage Organization", "operation": manage_organization},
         {"option_name": "Log Out", "operation": lambda: user.delete()},
         {"option_name": "Exit", "operation": exit}
     ]

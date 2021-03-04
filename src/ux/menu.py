@@ -5,6 +5,9 @@ from ux.text import colored, get_color
 def output_message(message, option="Continue"):
     print(colored(message,"split_yellow"))
 
+def option_unavailable():
+    output_message("Option unavailable", "Back")
+
 def select(title, options, name_field="option_name"):
     options = list(map(set_operation, options))
     return select_operation(title, options, name_field=name_field)
