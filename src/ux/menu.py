@@ -1,9 +1,9 @@
 import inquirer
 
-from ux.text import colored, split_color
+from ux.text import colored, get_color
 
 def output_message(message, option="Continue"):
-    print(colored(message,"yellow"))
+    print(colored(message,"split_yellow"))
 
 def select(title, options, name_field="option_name"):
     options = list(map(set_operation, options))
@@ -17,7 +17,7 @@ def select_operation(title, options, name_field="option_name"):
     option_tuples = [ (option[name_field],option) for option in options ]
     questions = [
         inquirer.List('result',
-            message=colored(title,"green"),
+            message=colored(title,"split_green"),
             choices=option_tuples)
     ]
     answers = inquirer.prompt(questions, theme=theme)
@@ -37,8 +37,8 @@ def password_input(title):
 
 def split_theme():
     theme_dict = {
-        "Question": {"mark_color": split_color("green"), "brackets_color": split_color("yellow")},
-        "List": {"selection_color": split_color("light_blue"), "selection_cursor": ">"},
+        "Question": {"mark_color": get_color("split_green"), "brackets_color": get_color("split_yellow")},
+        "List": {"selection_color": get_color("split_blue_light"), "selection_cursor": ">"},
     }
     return inquirer.themes.load_theme_from_dict(theme_dict)
 
