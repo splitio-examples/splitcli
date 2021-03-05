@@ -1,3 +1,3 @@
 
 def manage_metrics():
-  return
+    return

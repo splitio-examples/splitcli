@@ -1,2 +1,2 @@
 def manage_organization():
-  return
+    return

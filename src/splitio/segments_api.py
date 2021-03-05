@@ -79,32 +79,32 @@ def deactivate_segment(segment_name, environment_name):
     path = segment_instance_url(environment_name, segment_name)
     return http_client.delete(path)
 
-def get_segment_keys(workspace_id, segment_name, page=0):
+def get_segment_keys(segment_name, environment_name, page=0):
     limit = 100
     offset = page * limit
-    path = segment_action_url(workspace_id, segment_name, "keys") + f"?offset={offset}&limit={limit}"
+    path = segment_action_url(segment_name, environment_name, "keys") + f"?offset={offset}&limit={limit}"
     return http_client.get(path)
 
-def add_segment_keys(workspace_id, segment_name, keys, replace=False, comment=""):
+def add_segment_keys(segment_name, environment_name, keys, replace=False, comment=""):
     content = {
         "keys": keys,
         "comment": comment
     }
-    path = segment_action_url(workspace_id, segment_name, "uploadKeys")
+    path = segment_action_url(segment_name, environment_name, "uploadKeys")
     if replace:
         path += "?replace"
     return http_client.put(path, content)
 
-def upload_segment_keys(workspace_id, segment_name, file_path, replace=False):
-    path = segment_action_url(workspace_id, segment_name, "upload")
+def upload_segment_keys(segment_name, environment_name, file_path, replace=False):
+    path = segment_action_url(segment_name, environment_name, "upload")
     if replace:
         path += "?replace"
     return http_client.put(path)
 
-def remove_segment_keys(workspace_id, segment_name, keys, comment=""):
+def remove_segment_keys(segment_name, environment_name, keys, comment=""):
     content = {
         "keys": keys,
         "comment": comment
     }
-    path = segment_action_url(workspace_id, segment_name, "removeKeys")
+    path = segment_action_url(segment_name, environment_name, "removeKeys")
     return http_client.put(path, content)
