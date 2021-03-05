@@ -30,6 +30,8 @@ standard_colors = {
 
 foreground = standard_colors['bright_white']
 
+# TODO: Dark / Light / Uncolored modes
+
 def colored(text, color_name):
     color = get_color(color_name)
     return color + text + get_color(foreground)
