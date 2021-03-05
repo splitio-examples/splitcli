@@ -5,15 +5,19 @@ import config
 from ux.menu import text_input, password_input
 
 _user_singleton = None
+
+
 def get_user():
     global _user_singleton
     if _user_singleton == None:
         set_user(load_user())
     return _user_singleton
 
+
 def set_user(new_user):
     global _user_singleton
     _user_singleton = new_user
+
 
 def load_user():
     try:
@@ -23,14 +27,18 @@ def load_user():
     except:
         return None
 
+
 def sign_in():
-    firstname = text_input("Enter your first name: ")
-    split_apikey = password_input("Enter a Split Admin API Token: ")
+    firstname = text_input("Enter your first name")
+    print("To find your Admin API Key, follow the directions here:")
+    print("https://www.youtube.com/watch?v=80Bz2ZcZUrs")
+    split_apikey = password_input("Enter your Split Admin API Key")
     user = User(split_apikey, "", "", firstname, "", "")
     user.write()
     return user
 
-class User(object):    
+
+class User(object):
     def __init__(self, adminapi: str, orgID: str, userID: str, firstname: str, lastname: str, email: str):
         self.adminapi = adminapi
         self.orgID = orgID
