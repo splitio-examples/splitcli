@@ -71,12 +71,20 @@ def delete_segment(workspace_id, segment_name):
     path = segment_metadata_url(workspace_id, segment_name)
     return http_client.delete(path)
 
+def get_segment(workspace_id, segment_name, environment_name):
+    segments = list_segments_environment(workspace_id, environment_name)
+    result = list(filter(lambda x: x['name'] == segment_name, segments))
+    if len(result) == 1:
+        return result[0]
+    else:
+        return None
+
 def activate_segment(segment_name, environment_name):
-    path = segment_instance_url(environment_name, segment_name)
+    path = segment_instance_url(segment_name, environment_name)
     return http_client.post(path)
 
 def deactivate_segment(segment_name, environment_name):
-    path = segment_instance_url(environment_name, segment_name)
+    path = segment_instance_url(segment_name, environment_name)
     return http_client.delete(path)
 
 def get_segment_keys(segment_name, environment_name, page=0):
