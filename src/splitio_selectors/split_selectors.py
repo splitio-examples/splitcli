@@ -38,6 +38,9 @@ def create_split(workspace):
 
         create_split_in_all_environments(workspace, split_name, treatments, baseline)
         menu.success_message("Your split has been created!")
+
+        split = splits_api.get_split(workspace['id'], split_name)
+        manage_split(workspace, split)
     except Exception as exc:
         menu.error_message("Could not create split\n" + str(exc))
 
