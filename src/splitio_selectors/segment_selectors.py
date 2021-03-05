@@ -17,7 +17,7 @@ def manage_segments():
         for segment in segments:
             option = segment
             option["option_name"] = segment["name"]
-            option["operation"] = lambda bound_segment=segment: manage_segment(workspace, bound_segment)
+            option["operation"] = lambda bound_segment=segment: manage_segment(workspace, bound_segment["name"])
             options.append(option)
         options.append({"option_name": "Create a new segment", "operation": lambda: create_segment(workspace)})
         options.append({"option_name": "Go back", "go_back": True})
@@ -50,7 +50,7 @@ def manage_segment(workspace, segment_name):
 
         options = []
         for environment in environments:
-            definition = get_instance(segment_name, environment)
+            definition = get_instance(workspace, segment_name, environment)
             option = environment
             if definition == None:
                 option["option_name"] = "Create in " + option["name"]
@@ -74,15 +74,15 @@ def delete_segment(workspace, segment_name):
     ]
     menu.select_operation(title, options)
 
-def get_instance(segment_name, environment):
+def get_instance(workspace, segment_name, environment):
     try:
-        return segments_api.get_segment_keys(segment_name, environment["name"])
+        return segments_api.get_segment(workspace["id"], segment_name, environment["name"])
     except Exception as _:
         return None
 
 def manage_instance(workspace, segment_name, environment):
     while True:
-        segment = get_instance(segment_name, environment)
+        segment = get_instance(workspace, segment_name, environment)
         if segment == None:
             segments_api.activate_segment(segment_name, environment['name'])
         else:
