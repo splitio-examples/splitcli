@@ -1,4 +1,4 @@
-from splitio import splits_api, environments_api
+from split_apis import splits_api, environments_api
 from splitio_selectors import core_selectors, definition_selectors
 from ux import menu
 

@@ -1,6 +1,7 @@
 /config.txt
 /.env
-*/__pycache__
+__pycache__/
+ *.pyc
 .vscode
 *.egg-info
 split_internal
