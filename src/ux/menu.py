@@ -2,12 +2,31 @@ import inquirer
 
 from ux.text import colored, get_color
 
-def output_message(message, option="Continue"):
+def error_message(message):
+    print(colored(message,"red"))
+
+def info_message(message):
+    print(colored(message,"split_blue_light"))
+
+def success_message(message):
+    print(colored(message,"split_green"))
+
+def warn_message(message):
     print(colored(message,"split_yellow"))
 
+def option_unavailable():
+    error_message("Option unavailable")
+
+def select_strings(title, options):
+    options = list(map(set_name, list(options)))
+    return select(title, options)
+
 def select(title, options, name_field="option_name"):
-    options = list(map(set_operation, options))
+    options = list(map(set_operation, list(options)))
     return select_operation(title, options, name_field=name_field)
+
+def set_name(option):
+    return {"option_name": option}
 
 def set_operation(option):
     option.update({"operation": lambda: option})

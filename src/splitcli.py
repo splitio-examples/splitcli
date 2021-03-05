@@ -1,12 +1,14 @@
-from termcolor import colored
 from art import text2art
 import sys
 
 from splitio_selectors.split_selectors import manage_splits
+from splitio_selectors.segment_selectors import manage_segments
+from splitio_selectors.metric_selectors import manage_metrics
+from splitio_selectors.organization_selectors import manage_organization
 from accounts.user import get_user, sign_in
 from accounts import signup
 import config
-from ux.menu import select_operation, output_message
+from ux.menu import select_operation, info_message, error_message
 
 
 def initial_prompt():
@@ -19,9 +21,12 @@ def initial_prompt():
             newUserPrompt()
 
 def knownUserPrompt(user):
-    output_message(text2art(f"Hi {user.firstname}!!!"))
+    info_message(text2art(f"Hi {user.firstname}!!!"))
     options = [
         {"option_name": "Manage Splits", "operation": manage_splits},
+        {"option_name": "Manage Segments", "operation": manage_segments},
+        {"option_name": "Manage Metrics", "operation": manage_metrics},
+        {"option_name": "Manage Organization", "operation": manage_organization},
         {"option_name": "Log Out", "operation": lambda: user.delete()},
         {"option_name": "Exit", "operation": exit}
     ]
@@ -29,7 +34,7 @@ def knownUserPrompt(user):
     select_operation(title, options)
 
 def newUserPrompt():
-    output_message(text2art(f"Welcome to Split!"))
+    info_message(text2art(f"Welcome to Split!"))
     options = [
         {"option_name": "No, I need to create an account",
             "operation": lambda: signup.create_account()},
@@ -44,7 +49,7 @@ def main():
     minor_required = 6
 
     if sys.version_info.major < major_required or sys.version_info.minor < minor_required:
-        output_message(
+        error_message(
             f"Minimum version requirement is: {major_required}.{minor_required}. Your version is: {sys.version_info.major}.{sys.version_info.minor}")
         exit()
 

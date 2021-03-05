@@ -1,11 +1,9 @@
-from termcolor import colored
-from ux.menu import output_message, select_operation
 import json
 
 from splitio import splits_api, definitions_api, environments_api
 from templates import split_templates
 from splitio_selectors import core_selectors
-from ux.menu import text_input
+from ux.menu import option_unavailable, success_message, error_message, info_message, select_operation, text_input, error_message, select_strings
 
 def manage_splits():
     workspace = core_selectors.selection_workspace()
@@ -16,9 +14,9 @@ def manage_splits():
         print("Workspace: " + workspace["name"])
         title = ""
         if len(splits) == 0:
-            title += "No Splits exist yet!"
+            title += "No splits exist yet"
         else:
-            title += "Select Split to Manage"
+            title += "Select split to Manage"
 
         options = []
         for split in splits:
@@ -26,8 +24,7 @@ def manage_splits():
             option["option_name"] = split["name"]
             option["operation"] = lambda bound_split=split: manage_split(workspace, bound_split)
             options.append(option)
-        options.append({"option_name": "Create a new split",
-                        "operation": lambda: create_split(workspace)})
+        options.append({"option_name": "Create a new split", "operation": lambda: create_split(workspace)})
         options.append({"option_name": "Go back", "go_back": True})
 
         _, go_back = select_operation(title, options)
@@ -36,16 +33,46 @@ def manage_splits():
 
 def create_split(workspace):
     try:
-        split_name = text_input("Enter a name for your Split: ")
-        split_description = text_input("Enter a description for your Split: ")
+        split_name = text_input("Enter a name for your split: ")
+        split_description = text_input("Enter a description for your split: ")
         traffic_type = core_selectors.selection_traffic_type(workspace["id"])
 
-        splits_api.create_split(
-            workspace["id"], traffic_type["name"], split_name, split_description)
-        output_message("Your Split has been created!")
-    except Exception as exc:
-        output_message("Could not create Split\n" + str(exc))
+        (treatments, baseline) = select_treatments()
 
+        splits_api.create_split(workspace["id"], traffic_type["name"], split_name, split_description)
+
+        create_split_in_all_environments(workspace, split_name, treatments, baseline)
+        success_message("Your split has been created!")
+    except Exception as exc:
+        error_message("Could not create split\n" + str(exc))
+
+def create_split_in_all_environments(workspace, split_name, treatments, baseline):
+    environments = environments_api.list_environments(workspace["id"])
+    for environment in environments:
+        create_definition(workspace, split_name, environment)
+
+def select_treatments():
+    title = "Select Treatments"
+    options = [
+        {"option_name": "Toggle (on/off)", "operation": lambda: (["on", "off"], "off")},
+        {"option_name": "Custom", "operation": lambda: input_treatments()}
+    ]
+    selection,_ = select_operation(title, options)
+    return selection
+
+def input_treatments():
+    treatments = []
+    while True:
+        treatment = text_input("Add treatment name (empty when done)")
+        if treatment == "":
+            if len(treatments) < 2:
+                error_message("At least two treatments are required")
+            else:
+                break
+        else:
+            treatments.append(treatment)
+    baseline,_ = select_strings("Select baseline treatment", treatments)
+    return (treatments, baseline)
 
 def manage_split(workspace, split):
     while True:
@@ -59,13 +86,11 @@ def manage_split(workspace, split):
                 option["option_name"] = "Create in " + option["name"]
             else:
                 option["option_name"] = "Manage in " + option["name"]
-            option["operation"] = lambda bound_option=option: manage_definition(
-                workspace, split, bound_option)
+            option["operation"] = lambda bound_option=option: manage_definition(workspace, split, bound_option)
             options.append(option)
-        options.append({"option_name": "Delete Split", "operation": lambda: delete_split(
-            workspace, split), "go_back": True})
+        options.append({"option_name": "Delete split", "operation": lambda: delete_split(workspace, split), "go_back": True})
         options.append({"option_name": "Go back", "go_back": True})
-        title = "Managing Split: " + split["name"]
+        title = "Managing split: " + split["name"]
 
         _, go_back = select_operation(title, options)
         if go_back:
@@ -81,35 +106,31 @@ def delete_split(workspace, split):
     ]
     select_operation(title, options)
 
-
 def manage_definition(workspace, split, environment):
     while True:
         definition = get_definition(workspace, split, environment)
-        title = "Managing " + split["name"] + " in " + environment["name"]
-
-        options = []
         if definition == None:
-            options.append({"option_name": "Create", "operation": lambda: create_definition(
-                workspace, split, environment)})
-            options.append({"option_name": "Go back", "go_back": True})
+            (treatments, baseline) = select_treatments()
+            create_definition(workspace, split["name"], environment, treatments, baseline)
         else:
-            title += "\nDefinition: " + json.dumps(definition, indent=4)
-            options.append(
-                {"option_name": "Update", "operation": option_unavailable})
+            title = "Managing " + split["name"] + " in " + environment["name"]
+
+            options = []
+            options.append({"option_name": "Show definition", "operation": lambda: show_definition(definition)})
+            options.append({"option_name": "Update", "operation": option_unavailable})
             if definition.get("killed", False):
-                options.append({"option_name": "Restore", "operation": lambda: restore_definition(
-                    workspace, split, environment)})
+                options.append({"option_name": "Restore", "operation": lambda: restore_definition(workspace, split, environment)})
             else:
-                options.append({"option_name": "Kill", "operation": lambda: kill_definition(
-                    workspace, split, environment)})
-            options.append({"option_name": "Delete definition", "operation": lambda: delete_definition(
-                workspace, split, environment)})
+                options.append({"option_name": "Kill", "operation": lambda: kill_definition(workspace, split, environment)})
+            options.append({"option_name": "Delete definition", "go_back": True, "operation": lambda: delete_definition(workspace, split, environment)})
             options.append({"option_name": "Go back", "go_back": True})
 
-        _, go_back = select_operation(title, options)
-        if go_back:
-            return
+            _, go_back = select_operation(title, options)
+            if go_back:
+                return
 
+def show_definition(definition):
+    info_message("Definition: " + json.dumps(definition, indent=4))
 
 def get_definition(workspace, split, environment):
     try:
@@ -127,53 +148,25 @@ def delete_definition(workspace, split, environment):
     ]
     select_operation(title, options)
 
-
-def select_rollout():
-    title = "Select the type of rollout"
-    options = [
-        {"option_name": "Toggled Rollout - Basic on/off feature flag",
-            "operation": lambda: split_templates.toggleSplit("Create via Split CLI")},
-        {"option_name": "Ramped Rollout - Incrementally release your feature through a percentage rollout",
-            "operation": option_unavailable}
-    ]
-    selection, _ = select_operation(title, options)
-    return selection
-
-
-def create_definition(workspace, split, environment):
+def create_definition(workspace, split_name, environment, treatments=["on", "off"], baseline="off"):
     try:
-        split_data = select_rollout()
-        definitions_api.create(
-            workspace["id"], environment["name"], split["name"], split_data)
-        output_message("Your definition has been created!")
+        split_data = split_templates.new_split(treatments, baseline)
+        definitions_api.create(workspace["id"], environment["name"], split_name, split_data)
     except Exception as exc:
-        output_message("Could not create Split\n" + str(exc))
-
+        error_message("Could not create split\n" + str(exc))
 
 def kill_definition(workspace, split, environment):
     try:
         definitions_api.kill(
             workspace["id"], environment["name"], split["name"])
-        output_message(f"You killed " +
-                       split["name"] + " in " + environment["name"] + ". RIP.")
+        success_message(f"You killed " + split["name"] + " in " + environment["name"] + ". RIP.")
     except Exception as exc:
-        output_message("Could not kill Split\n" + str(exc))
-
+        error_message("Could not kill split\n" + str(exc))
 
 def restore_definition(workspace, split, environment):
     try:
         definitions_api.restore(
             workspace["id"], environment["name"], split["name"])
-        output_message(
-            f"You restored " + split["name"] + " in " + environment["name"] + ". It's Alive!!")
+        success_message(f"You restored " + split["name"] + " in " + environment["name"] + ". It's Alive!!")
     except Exception as exc:
-        output_message("Could not restore Split\n" + str(exc))
-
-
-def promote_definition(workspace, split, environment):
-    # split_name = input("Enter the name of the Split you wish to promote: ")
-    pass
-
-
-def option_unavailable():
-    output_message("Option unavailable", "Back")
+        error_message("Could not restore split\n" + str(exc))
