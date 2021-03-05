@@ -1,7 +1,7 @@
 <h1 align="center">Welcome to the Split CLI 👋</h1>
 <p>
-  <a href="https://twitter.com/talia\_nassi" target="_blank">
-    <img alt="Twitter: talia\_nassi" src="https://img.shields.io/twitter/follow/talia\_nassi.svg?style=social" />
+  <a href="https://twitter.com/talia_nassi" target="_blank">
+    <img alt="Twitter: talia\_nassi" src="https://img.shields.io/twitter/follow/talia_nassi.svg?style=social" />
   </a>
 </p>
 
