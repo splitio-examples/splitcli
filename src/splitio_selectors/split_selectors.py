@@ -1,22 +1,20 @@
 import json
 
-from splitio import splits_api, definitions_api, environments_api
+from splitio import splits_api, definitions_api, environments_api, segments_api
 from templates import split_templates
 from splitio_selectors import core_selectors
-from ux.menu import option_unavailable, success_message, error_message, info_message, select_operation, text_input, error_message, select_strings
+from ux import menu
 
 def manage_splits():
     workspace = core_selectors.selection_workspace()
 
     while True:
         splits = splits_api.list_splits(workspace["id"])
-
-        print("Workspace: " + workspace["name"])
-        title = ""
+        title = None
         if len(splits) == 0:
-            title += "No splits exist yet"
+            title = "No splits exist yet"
         else:
-            title += "Select split to Manage"
+            title = "Select split to Manage"
 
         options = []
         for split in splits:
@@ -27,14 +25,14 @@ def manage_splits():
         options.append({"option_name": "Create a new split", "operation": lambda: create_split(workspace)})
         options.append({"option_name": "Go back", "go_back": True})
 
-        _, go_back = select_operation(title, options)
+        _, go_back = menu.select_operation(title, options)
         if go_back:
             return
 
 def create_split(workspace):
     try:
-        split_name = text_input("Enter a name for your split: ")
-        split_description = text_input("Enter a description for your split: ")
+        split_name = menu.text_input("Enter a name for your split: ")
+        split_description = menu.text_input("Enter a description for your split: ")
         traffic_type = core_selectors.selection_traffic_type(workspace["id"])
 
         (treatments, baseline) = select_treatments()
@@ -42,9 +40,9 @@ def create_split(workspace):
         splits_api.create_split(workspace["id"], traffic_type["name"], split_name, split_description)
 
         create_split_in_all_environments(workspace, split_name, treatments, baseline)
-        success_message("Your split has been created!")
+        menu.success_message("Your split has been created!")
     except Exception as exc:
-        error_message("Could not create split\n" + str(exc))
+        menu.error_message("Could not create split\n" + str(exc))
 
 def create_split_in_all_environments(workspace, split_name, treatments, baseline):
     environments = environments_api.list_environments(workspace["id"])
@@ -57,22 +55,19 @@ def select_treatments():
         {"option_name": "Toggle (on/off)", "operation": lambda: (["on", "off"], "off")},
         {"option_name": "Custom", "operation": lambda: input_treatments()}
     ]
-    selection,_ = select_operation(title, options)
+    selection,_ = menu.select_operation(title, options)
     return selection
 
 def input_treatments():
-    treatments = []
-    while True:
-        treatment = text_input("Add treatment name (empty when done)")
-        if treatment == "":
-            if len(treatments) < 2:
-                error_message("At least two treatments are required")
-            else:
-                break
-        else:
-            treatments.append(treatment)
-    baseline,_ = select_strings("Select baseline treatment", treatments)
+    treatments = menu.input_list("Add treatment name", treatments_validator)
+    baseline,_ = menu.select("Select baseline treatment", treatments)
     return (treatments, baseline)
+
+def treatments_validator(treatments):
+    if len(treatments) < 2:
+        return menu.error_message("At least two treatments are required")
+    else:
+        return None
 
 def manage_split(workspace, split):
     while True:
@@ -92,10 +87,9 @@ def manage_split(workspace, split):
         options.append({"option_name": "Go back", "go_back": True})
         title = "Managing split: " + split["name"]
 
-        _, go_back = select_operation(title, options)
+        _, go_back = menu.select_operation(title, options)
         if go_back:
             return
-
 
 def delete_split(workspace, split):
     title = "Are you sure?"
@@ -104,7 +98,7 @@ def delete_split(workspace, split):
             workspace["id"], split["name"])},
         {"option_name": "No", "go_back": True}
     ]
-    select_operation(title, options)
+    menu.select_operation(title, options)
 
 def manage_definition(workspace, split, environment):
     while True:
@@ -117,7 +111,9 @@ def manage_definition(workspace, split, environment):
 
             options = []
             options.append({"option_name": "Show definition", "operation": lambda: show_definition(definition)})
-            options.append({"option_name": "Update", "operation": option_unavailable})
+            options.append({"option_name": "Target keys", "operation": lambda: target_keys(workspace, split, environment, definition)})
+            options.append({"option_name": "Target segments", "operation": lambda: target_segments(workspace, split, environment, definition)})
+            options.append({"option_name": "Ramp split", "operation": lambda: ramp_split(workspace, split, environment, definition)})
             if definition.get("killed", False):
                 options.append({"option_name": "Restore", "operation": lambda: restore_definition(workspace, split, environment)})
             else:
@@ -125,19 +121,18 @@ def manage_definition(workspace, split, environment):
             options.append({"option_name": "Delete definition", "go_back": True, "operation": lambda: delete_definition(workspace, split, environment)})
             options.append({"option_name": "Go back", "go_back": True})
 
-            _, go_back = select_operation(title, options)
+            _, go_back = menu.select_operation(title, options)
             if go_back:
                 return
 
 def show_definition(definition):
-    info_message("Definition: " + json.dumps(definition, indent=4))
+    menu.info_message("Definition: " + json.dumps(definition, indent=4))
 
 def get_definition(workspace, split, environment):
     try:
         return definitions_api.get(workspace["id"], environment["name"], split["name"])
     except Exception as _:
         return None
-
 
 def delete_definition(workspace, split, environment):
     title = "Are you sure?"
@@ -146,27 +141,73 @@ def delete_definition(workspace, split, environment):
             workspace["id"], environment["name"], split["name"])},
         {"option_name": "No", "go_back": True}
     ]
-    select_operation(title, options)
+    menu.select_operation(title, options)
 
 def create_definition(workspace, split_name, environment, treatments=["on", "off"], baseline="off"):
     try:
         split_data = split_templates.new_split(treatments, baseline)
         definitions_api.create(workspace["id"], environment["name"], split_name, split_data)
     except Exception as exc:
-        error_message("Could not create split\n" + str(exc))
+        menu.error_message("Could not create split\n" + str(exc))
 
 def kill_definition(workspace, split, environment):
     try:
-        definitions_api.kill(
-            workspace["id"], environment["name"], split["name"])
-        success_message(f"You killed " + split["name"] + " in " + environment["name"] + ". RIP.")
+        definitions_api.kill(workspace["id"], environment["name"], split["name"])
+        menu.success_message(f"You killed " + split["name"] + " in " + environment["name"] + ". RIP.")
     except Exception as exc:
-        error_message("Could not kill split\n" + str(exc))
+        menu.error_message("Could not kill split\n" + str(exc))
 
 def restore_definition(workspace, split, environment):
     try:
-        definitions_api.restore(
-            workspace["id"], environment["name"], split["name"])
-        success_message(f"You restored " + split["name"] + " in " + environment["name"] + ". It's Alive!!")
+        definitions_api.restore(workspace["id"], environment["name"], split["name"])
+        menu.success_message(f"You restored " + split["name"] + " in " + environment["name"] + ". It's Alive!!")
     except Exception as exc:
-        error_message("Could not restore split\n" + str(exc))
+        menu.error_message("Could not restore split\n" + str(exc))
+
+def target_keys(workspace, split, environment, definition):
+    try:
+        treatments = map(lambda x: x['name'], definition['treatments'])
+        treatment,_ = menu.select("Which treatment are you targeting", treatments)
+        keys = menu.input_list("Provide a key to add to list")
+        split_data = split_templates.set_keys(definition, treatment, keys)
+        definitions_api.full_update(workspace["id"], environment["name"], split["name"], split_data)
+    except Exception as exc:
+        menu.error_message("Could not add keys to split\n" + str(exc))
+
+def target_segments(workspace, split, environment, definition):
+    try:
+        traffic_type_name = split['trafficType']['name']
+        segments = segments_api.list_segments_environment(workspace['id'], environment['name'])
+        segments = list(filter(lambda x: x['trafficType']['name'] == traffic_type_name, segments))
+        segment_names = list(map(lambda x: x['name'], segments))
+        
+        treatment = menu.select("Which treatment are you targeting", definition['treatments'], name_field="name")
+        default = treatment.get("segments",[])
+        result = menu.checkbox("Select segments to target", segment_names, default)
+
+        split_data = split_templates.set_segments(definition, treatment["name"], result)
+        definitions_api.full_update(workspace["id"], environment["name"], split["name"], split_data)
+    except Exception as exc:
+        menu.error_message("Could not update split\n" + str(exc))
+
+def ramp_split(workspace, split, environment, definition):
+    try:
+        total_ramp = 0
+        treatment_map = {}
+        default_treatment = definition['defaultTreatment']
+        for treatment in definition['treatments']:
+            treatment_name = treatment['name']
+            if treatment_name != default_treatment:
+                while True:
+                    ramp_percent = int(menu.text_input("Ramp percentage for " + treatment_name))
+                    if total_ramp + ramp_percent > 100:
+                        menu.error_message("Total ramp percentage must be less than 100: remaining=" + (100-total_ramp))
+                    else:
+                        treatment_map[treatment_name] = ramp_percent
+                        total_ramp += ramp_percent
+                        break
+        treatment_map[default_treatment] = 100 - total_ramp
+        split_data = split_templates.ramp_default_rule(definition, treatment_map)
+        definitions_api.full_update(workspace["id"], environment["name"], split["name"], split_data)
+    except Exception as exc:
+        menu.error_message("Could not update split\n" + str(exc))
