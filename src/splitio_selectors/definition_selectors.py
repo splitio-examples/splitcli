@@ -1,6 +1,6 @@
 import json
 
-from splitio import definitions_api, segments_api
+from split_apis import definitions_api, segments_api
 from templates import split_templates
 from ux import menu
 
@@ -32,8 +32,8 @@ def manage_definition(workspace, split, environment):
 def select_treatments():
     title = "Select Treatments"
     options = [
-        {"option_name": "Toggle (on/off)", "operation": lambda: (["on", "off"], "off")},
-        {"option_name": "Custom", "operation": lambda: input_treatments()}
+        {"option_name": "Simple Rollout - on & off treatments", "operation": lambda: (["on", "off"], "off")},
+        {"option_name": "Custom & Multivariant - create any treatments needed", "operation": lambda: input_treatments()}
     ]
     selection,_ = menu.select_operation(title, options)
     return selection

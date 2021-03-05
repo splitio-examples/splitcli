@@ -1,4 +1,4 @@
-from splitio import http_client
+from split_apis import http_client
 
 # URLs
 
@@ -70,6 +70,11 @@ def create_segment(workspace_id, traffic_type_name, segment_name, segment_descri
 def delete_segment(workspace_id, segment_name):
     path = segment_metadata_url(workspace_id, segment_name)
     return http_client.delete(path)
+
+def delete_all_segments(workspace_id):
+    segments = list_segments(workspace_id)
+    for segment in segments:
+        delete_segment(workspace_id, segment['name'])
 
 def get_segment(workspace_id, segment_name, environment_name):
     segments = list_segments_environment(workspace_id, environment_name)

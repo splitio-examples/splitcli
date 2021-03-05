@@ -4,12 +4,16 @@ import config
 
 from ux.menu import text_input, password_input
 
-user_singleton = None
+_user_singleton = None
 def get_user():
-    global user_singleton
-    if user_singleton == None:
-        user_singleton = load_user()
-    return user_singleton
+    global _user_singleton
+    if _user_singleton == None:
+        set_user(load_user())
+    return _user_singleton
+
+def set_user(new_user):
+    global _user_singleton
+    _user_singleton = new_user
 
 def load_user():
     try:
@@ -43,7 +47,7 @@ class User(object):
             json.dump(self.__dict__, f)
 
     def delete(self):
-        global user_singleton
+        global _user_singleton
         if os.path.exists(config.config_file):
             os.remove(config.config_file)
-            user_singleton = None
+            _user_singleton = None

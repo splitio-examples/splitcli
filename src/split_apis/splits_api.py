@@ -1,4 +1,4 @@
-from splitio import http_client
+from split_apis import http_client
 
 # URLs
 
@@ -47,3 +47,8 @@ def get_split(workspace_id, split_name):
 def delete_split(workspace_id, split_name):
     path = split_metadata_url(workspace_id, split_name)
     return http_client.delete(path)
+
+def delete_all_splits(workspace_id):
+    all_splits = list_splits(workspace_id)
+    for split in all_splits:
+        delete_split(workspace_id, split["name"])

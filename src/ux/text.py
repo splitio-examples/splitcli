@@ -1,4 +1,53 @@
 from ux.hex_color import match_256
+import re
+
+def set_theme(is_dark=True):
+    global is_dark_theme
+    is_dark_theme = is_dark
+
+def get_theme():
+    return themes.get(is_dark_theme, None)
+
+def colored(text, color_name):
+    color = get_color(color_name)
+    return color + text + get_color("foreground")
+
+def get_color(color_name):
+    theme = get_theme()
+    if theme == None:
+        return ""
+    if color_name in theme:
+        return get_color(theme[color_name])
+    if color_name in split_colors:
+        return split_colors[color_name]
+    if color_name in standard_colors:
+        return standard_colors[color_name]
+    return theme["foreground"]
+
+def inquirer_theme():
+    return inquirer_themes.get(is_dark_theme, None)
+
+def split_logo():
+    logo = split_logo_plain
+    logo = logo.replace("/", colored("/", "split_blue_dark"))
+    logo = logo.replace(",", colored(",", "split_blue_light"))
+    logo = logo.replace("@", colored("@", "foreground"))
+    return logo
+
+split_logo_plain = """
+              /////
+          /////////                                            @@@   @@    @@@
+     ///////////                                               @@@   @@    @@@
+ ///////////,,,,,                   @@@@@@    @@  @@@@@@@      @@@   @@  @@@@@@@
+///////   ,,,,,,,,,,,              @@    @@   @@@@      @@@    @@@   @@    @@@
+/////////     ,,,,,,,,,,,          @@@@@      @@          @@   @@@   @@    @@@
+  ///////////      ,,,,,,,,            @@@@   @@          @@   @@@   @@    @@@
+       ///////////  ,,,,,,,       @@@    @@@  @@@@      @@@    @@@   @@    @@@
+           ////////,,,,,,,          @@@@@@    @@  @@@@@@@      @@@   @@    @@@
+           ,,,,,///,,,                        @@
+         ,,,,,,,,,                            @@
+         ,,,,
+"""
 
 split_colors = {
     "split_black": match_256("333333"),
@@ -28,13 +77,23 @@ standard_colors = {
     "reset": "\u001b[0",
 }
 
-foreground = standard_colors['bright_white']
+is_dark_theme = True
+themes = {
+    True: {
+        "foreground": "bright_white",
+    },
+    False: {
+        "foreground": "split_black",
+    }
+}
 
-# TODO: Dark / Light / Uncolored modes
-
-def colored(text, color_name):
-    color = get_color(color_name)
-    return color + text + get_color(foreground)
-
-def get_color(color_name):
-    return split_colors.get(color_name, standard_colors.get(color_name, foreground))
+inquirer_themes = {
+    True: {
+        "Question": {"mark_color": get_color("split_yellow"), "brackets_color": get_color("split_green")},
+        "List": {"selection_color": get_color("split_blue_light"), "selection_cursor": ">"},
+    },
+    False: {
+        "Question": {"mark_color": get_color("split_yellow"), "brackets_color": get_color("split_green")},
+        "List": {"selection_color": get_color("split_blue_dark"), "selection_cursor": ">"},
+    }
+}

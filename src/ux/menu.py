@@ -1,20 +1,23 @@
 import inquirer
 
-from ux.text import colored, get_color
+from ux import text
 
 # Logging
 
+def print_logo():
+    print(text.split_logo())
+
 def error_message(message):
-    print(colored(message,"red"))
+    print(text.colored(message,"red"))
 
 def info_message(message):
-    print(colored(message,"split_blue_light"))
+    print(text.colored(message,"split_blue_light"))
 
 def success_message(message):
-    print(colored(message,"split_green"))
+    print(text.colored(message,"split_green"))
 
 def warn_message(message):
-    print(colored(message,"split_yellow"))
+    print(text.colored(message,"split_yellow"))
 
 # Inputs
 
@@ -52,7 +55,7 @@ def select(title, options, name_field=None):
         options = [ (option[name_field],option) for option in options ]
     questions = [
         inquirer.List('result',
-            message=colored(title,"split_green"),
+            message=text.colored(title,"split_green"),
             choices=options)
     ]
     answers = inquirer.prompt(questions, theme=theme)
@@ -65,11 +68,4 @@ def checkbox(title, options, selections, name_field=None):
     answers = inquirer.prompt(questions, theme=theme)
     return answers["result"]
 
-def split_theme():
-    theme_dict = {
-        "Question": {"mark_color": get_color("split_yellow"), "brackets_color": get_color("split_green")},
-        "List": {"selection_color": get_color("split_blue_light"), "selection_cursor": ">"},
-    }
-    return inquirer.themes.load_theme_from_dict(theme_dict)
-
-theme = split_theme()
+theme = inquirer.themes.load_theme_from_dict(text.inquirer_theme())
