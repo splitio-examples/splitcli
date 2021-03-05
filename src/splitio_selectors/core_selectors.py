@@ -1,6 +1,4 @@
-from splitio import workspaces_api
-from splitio import environments_api
-from splitio import traffic_types_api
+from split_apis import workspaces_api, environments_api, traffic_types_api
 from ux.menu import select
 
 
