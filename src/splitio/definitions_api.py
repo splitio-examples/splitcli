@@ -20,6 +20,11 @@ def create(workspace_id, environment_name, split_name, split_data):
     result = http_client.post(path, split_data)
     return result
 
+def full_update(workspace_id, environment_name, split_name, split_data):
+    path = split_url(workspace_id, split_name, environment_name)
+    result = http_client.put(path, split_data)
+    return result
+
 def delete(workspace_id, environment_name, split_name):
     path = split_url(workspace_id, split_name, environment_name)
     http_client.delete(path)

@@ -1,5 +1,3 @@
-
-
 def set_configuration(definition, treatment_name, configuration):
     for treatment in definition["treatments"]:
         if treatment["name"] == treatment_name:
@@ -21,10 +19,12 @@ def set_keys(definition, treatment_name, keys):
             return definition
     raise ValueError("Treatment does not exist: " + treatment_name)
 
-def ramp_baseline(treatment_map):
+def ramp_default_rule(definition, treatment_map):
     treatments = []
     for treatment,size in treatment_map.items():
         treatments.append(bucket(treatment, size))
+    definition['defaultRule'] = treatments
+    return definition
 
 def new_split(treatments, baseline):
     comment = "Created via Split CLI"
