@@ -1,7 +1,7 @@
 <h1 align="center">Welcome to the Split CLI 👋</h1>
 <p>
   <a href="https://twitter.com/talia_nassi" target="_blank">
-    <img alt="Twitter: talia\_nassi" src="https://img.shields.io/twitter/follow/talia_nassi.svg?style=social" />
+    <img alt="Twitter: talia_nassi" src="https://img.shields.io/twitter/follow/talia_nassi.svg?style=social" />
   </a>
 </p>
 
@@ -9,17 +9,17 @@ The Split CLI is a Command Line Interface to make it easier for developers to ma
 
 ### 🏠 [Homepage](www.split.io)
 
-## Install
+## Running the CLI
 
 ```sh
-python3 splitcli.py
+splitcli
 ```
 
 ## Authors
 
 👤 **Talia Nassi**
 
-* Twitter: [@talia\_nassi](https://twitter.com/talia\_nassi)
+* Twitter: [@talia_nassi](https://twitter.com/talia_nassi)
 * Github: [@talianassi921](https://github.com/talianassi921)
 
 👤 **Henry Jewkes**
@@ -32,6 +32,9 @@ python3 splitcli.py
 * Twitter: [@afitnerd](https://twitter.com/afitnerd)
 * Github: [@dogeared](https://github.com/dogeared)
 
+## Prerequisites
+
+Install Python Inquirer
 
 
 ## Show your support
