@@ -16,13 +16,18 @@ def delete(path):
     response = requests.delete(f"{base_url}/{path}", headers=headers())
     handle_response(response)
 
-def post(path, content):
+def post(path, content=None):
     response = requests.post(f"{base_url}/{path}", headers=headers(), json=content)
     return handle_response(response, content)
 
-def put(path, content):
+def put(path, content=None):
     response = requests.put(f"{base_url}/{path}", headers=headers(), json=content)
     return handle_response(response, content)
+
+def put_file(path, file_path):
+    with open(file_path, 'rb') as f:
+        response = requests.put(f"{base_url}/{path}", headers=headers(), files={file_path: f})
+        return handle_response(response)
 
 def headers():
     user = get_user()
