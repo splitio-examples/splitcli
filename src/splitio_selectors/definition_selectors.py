@@ -1,6 +1,6 @@
 import json
 
-from splitio import definitions_api, segments_api
+from split_apis import definitions_api, segments_api
 from templates import split_templates
 from ux import menu
 

@@ -1,4 +1,4 @@
-from splitio import http_client
+from split_apis import http_client
 
 
 def environment_url(workspace_id):
