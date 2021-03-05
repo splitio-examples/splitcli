@@ -22,7 +22,6 @@ class EventGenerator(object):
 				if result == False:
 					print(split_client._events_storage.__dict__)
 					print(split_client._events_storage._events.__dict__)
-					system.exit()
 
 	def __str__(self):
 		return str({
