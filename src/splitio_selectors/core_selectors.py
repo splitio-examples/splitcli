@@ -1,5 +1,5 @@
 from split_apis import workspaces_api, environments_api, traffic_types_api
-from ux.menu import select
+from ux import menu
 
 
 def selection_environment(workspace_id):
@@ -9,7 +9,7 @@ def selection_environment(workspace_id):
         return environments[0]
     
     title = 'Please select your environment'
-    environment = select(title, environments, name_field="name")
+    environment = menu.select(title, environments, name_field="name")
     return environment
 
 def selection_traffic_type(workspace_id):
@@ -18,7 +18,7 @@ def selection_traffic_type(workspace_id):
         traffic_type = traffic_types[0]["name"]
         return traffic_types[0]
     title = 'Please select your traffic type'
-    traffic_type = select(title, traffic_types, name_field="name")
+    traffic_type = menu.select(title, traffic_types, name_field="name")
     return traffic_type
 
 def selection_workspace():
@@ -27,5 +27,5 @@ def selection_workspace():
         workspace = workspaces[0]["name"]
         return workspaces[0]
     title = 'Please select your workspace'
-    workspace = select(title, workspaces, name_field="name")
+    workspace = menu.select(title, workspaces, name_field="name")
     return workspace
