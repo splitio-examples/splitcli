@@ -32,10 +32,11 @@ splitcli
 * Twitter: [@afitnerd](https://twitter.com/afitnerd)
 * Github: [@dogeared](https://github.com/dogeared)
 
-## Prerequisites
+## Build locally
 
-Install Python Inquirer
+Split CLI requires Python 3.6 at minimum.
 
+## Coming soon to PyPi!
 
 ## Show your support
 
