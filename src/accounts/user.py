@@ -40,6 +40,9 @@ def sign_in():
     active_user = users_api.get_user_by_email(email)
     if active_user != None:
         user.firstname = active_user['name']
+    else:
+        user.firstname = email
+        menu.warn_message("Email does not exist in organization")
 
     user.write()
 
