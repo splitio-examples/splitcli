@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 /config.txt
 /.env
-*/__pycache__
+__pycache__/
+ *.pyc
 .vscode
-=======
-__pycache__
 *.egg-info
->>>>>>> reorganized project for installation with pip.
+split_internal
