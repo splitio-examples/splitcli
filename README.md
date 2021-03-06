@@ -1,14 +1,25 @@
-# Welcome to the Split CLI 👋
+<h1 align="center">Welcome to the Split CLI 👋</h1>
+<p>
+  <a href="https://twitter.com/talia_nassi" target="_blank">
+    <img alt="Twitter: talia_nassi" src="https://img.shields.io/twitter/follow/talia_nassi.svg?style=social" />
+  </a>
+</p>
 
-> The Split CLI is a Command Line Interface to make it easier for developers to manage their feature flags
+The Split CLI is a Command Line Interface to make it easier for developers to manage their feature flags
 
 ### 🏠 [Homepage](www.split.io)
+
+## Running the CLI
+
+```sh
+splitcli
+```
 
 ## Authors
 
 👤 **Talia Nassi**
 
-* Twitter: [@talia\_nassi](https://twitter.com/talia\_nassi)
+* Twitter: [@talia_nassi](https://twitter.com/talia_nassi)
 * Github: [@talianassi921](https://github.com/talianassi921)
 
 👤 **Henry Jewkes**
@@ -21,18 +32,12 @@
 * Twitter: [@afitnerd](https://twitter.com/afitnerd)
 * Github: [@dogeared](https://github.com/dogeared)
 
-## Show your support
-
-Give a ⭐️ if this project helped you!
-
 ## Build locally
 
 Split CLI requires Python 3.6 at minimum.
 
-To install locally in edit mode, you can run:
-
-```
-python -m pip install -e .
-```
-
 ## Coming soon to PyPi!
+
+## Show your support
+
+Give a ⭐️ if this project helped you!

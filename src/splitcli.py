@@ -1,12 +1,16 @@
-from termcolor import colored
 from art import text2art
-from pick import pick
+import argparse
 import sys
 
 from splitio_selectors.split_selectors import manage_splits
+from splitio_selectors.segment_selectors import manage_segments
+from splitio_selectors.metric_selectors import manage_metrics
+from splitio_selectors.organization_selectors import manage_organization
 from accounts.user import get_user, sign_in
 from accounts import signup
 import config
+from ux import menu, text
+
 
 def initial_prompt():
     # Infinite loop is stopped by exit option
@@ -18,33 +22,39 @@ def initial_prompt():
             newUserPrompt()
 
 def knownUserPrompt(user):
+    menu.info_message(text2art(f"Hi {user.firstname}!!!"))
     options = [
-        { "name": "Manage Splits", "operation": manage_splits },
-        { "name": "Log Out", "operation": lambda: user.delete() },
-        { "name": "Exit", "operation": exit }
+        {"option_name": "Manage Splits", "operation": manage_splits},
+        {"option_name": "Manage Segments", "operation": manage_segments},
+        {"option_name": "Manage Metrics", "operation": manage_metrics},
+        {"option_name": "Manage Organization", "operation": manage_organization},
+        {"option_name": "Log Out", "operation": lambda: user.delete()},
+        {"option_name": "Exit", "operation": exit}
     ]
-    title = text2art(f"Hi {user.firstname}!!")
-    selection,_ = pick(options, title, options_map_func=lambda x: x['name'])
-    selection['operation']()
+    title = "Select"
+    menu.select_operation(title, options)
 
 def newUserPrompt():
+    menu.info_message(text2art(f"Welcome to Split!"))
     options = [
-        { "name": "No, I need to create an account", "operation": lambda: signup.create_account() },
-        { "name": "Yes, take me to sign in", "operation": lambda: sign_in() },
-        { "name": "Exit", "operation": exit }
+        {"option_name": "No, I need to create an account",
+            "operation": lambda: signup.create_account()},
+        {"option_name": "Yes, take me to sign in", "operation": lambda: sign_in()},
+        {"option_name": "Exit", "operation": exit}
     ]
-    title = f"Welcome to Split! Do you have an existing account?"
-    selection,_ = pick(options, title, options_map_func=lambda x: x['name'])
-    selection['operation']()
+    title = f"Do you have an existing account?"
+    menu.select_operation(title, options)
 
 def main():
     major_required = 3
     minor_required = 6
 
     if sys.version_info.major < major_required or sys.version_info.minor < minor_required:
-        print(f"Minimum version requirement is: {major_required}.{minor_required}. Your version is: {sys.version_info.major}.{sys.version_info.minor}")
+        menu.error_message(
+            f"Minimum version requirement is: {major_required}.{minor_required}. Your version is: {sys.version_info.major}.{sys.version_info.minor}")
         exit()
 
+    menu.print_logo()
     initial_prompt()
 
 main()

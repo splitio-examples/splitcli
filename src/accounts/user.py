@@ -1,14 +1,23 @@
 import json
 import os
 import config
-from getpass import getpass
 
-user_singleton = None
+from ux.menu import text_input, password_input
+
+_user_singleton = None
+
+
 def get_user():
-    global user_singleton
-    if user_singleton == None:
-        user_singleton = load_user()
-    return user_singleton
+    global _user_singleton
+    if _user_singleton == None:
+        set_user(load_user())
+    return _user_singleton
+
+
+def set_user(new_user):
+    global _user_singleton
+    _user_singleton = new_user
+
 
 def load_user():
     try:
@@ -18,14 +27,18 @@ def load_user():
     except:
         return None
 
+
 def sign_in():
-    firstname = input("Enter your first name: ")
-    split_apikey = getpass("Enter a Split Admin API Token: ")
+    firstname = text_input("Enter your first name")
+    print("To find your Admin API Key, follow the directions here:")
+    print("https://www.youtube.com/watch?v=80Bz2ZcZUrs")
+    split_apikey = password_input("Enter your Split Admin API Key")
     user = User(split_apikey, "", "", firstname, "", "")
     user.write()
     return user
 
-class User(object):    
+
+class User(object):
     def __init__(self, adminapi: str, orgID: str, userID: str, firstname: str, lastname: str, email: str):
         self.adminapi = adminapi
         self.orgID = orgID
@@ -42,7 +55,7 @@ class User(object):
             json.dump(self.__dict__, f)
 
     def delete(self):
-        global user_singleton
+        global _user_singleton
         if os.path.exists(config.config_file):
             os.remove(config.config_file)
-            user_singleton = None
+            _user_singleton = None
