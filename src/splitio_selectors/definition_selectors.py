@@ -14,7 +14,7 @@ def manage_definition(workspace, split, environment):
             title = "Managing " + split["name"] + " in " + environment["name"]
 
             options = []
-            options.append({"option_name": "Show definition", "operation": lambda: show_definition(definition)})
+            options.append({"option_name": "Show full definition JSON", "operation": lambda: show_definition_json(definition)})
             options.append({"option_name": "Target keys", "operation": lambda: target_keys(workspace, split, environment, definition)})
             options.append({"option_name": "Target segments", "operation": lambda: target_segments(workspace, split, environment, definition)})
             options.append({"option_name": "Ramp split", "operation": lambda: ramp_split(workspace, split, environment, definition)})
@@ -25,6 +25,7 @@ def manage_definition(workspace, split, environment):
             options.append({"option_name": "Delete definition", "go_back": True, "operation": lambda: delete_definition(workspace, split, environment)})
             options.append({"option_name": "Go back", "go_back": True})
 
+            show_definition(definition)
             _, go_back = menu.select_operation(title, options)
             if go_back:
                 return
@@ -48,6 +49,9 @@ def treatments_validator(treatments):
         return menu.error_message("At least two treatments are required")
     else:
         return None
+
+def show_definition_json(definition):
+    menu.info_message(json.dumps(definition, indent=4))
 
 def show_definition(definition):
     output = ""
