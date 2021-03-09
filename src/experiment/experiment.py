@@ -1,5 +1,6 @@
 import time
 
+from experiment.batch_client import BatchClient
 from experiment.event_result import EventResult
 
 class Experiment(object):
@@ -34,18 +35,17 @@ class Experiment(object):
 		for generator in self.comp_generators:
 			generator.events(split_client, key, position)
 
-	def run(self, split_client):
+	def run(self, sdk_token):
+		batch_client = BatchClient(sdk_token)
 		print("Creating Experiment")
 		for position in range(self.sample):
 			key = self.key(position)
-			treatment = split_client.get_treatment(key, self.feature)
-		time.sleep(.1)
+			treatment = batch_client.get_treatment(key, self.feature)
+		time.sleep(.001)
 		for position in range(self.sample):
-			if position % 1000 == 0:
-				print(position)
 			key = self.key(position)
-			treatment = split_client.get_treatment(key, self.feature)
+			treatment = batch_client.get_treatment(key, self.feature)
 			if treatment == self.comp_treatment:
-				self.comp_events(split_client, key, position)
+				self.comp_events(batch_client, key, position)
 			else:
-				self.base_events(split_client, key, position)
+				self.base_events(batch_client, key, position)
