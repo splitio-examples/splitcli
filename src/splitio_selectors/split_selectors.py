@@ -28,8 +28,8 @@ def manage_splits():
 
 def create_split(workspace):
     try:
-        split_name = menu.text_input("Enter a name for your split: ")
-        split_description = menu.text_input("Enter a description for your split: ")
+        split_name = menu.text_input("Enter a name for your split")
+        split_description = menu.text_input("Enter a description for your split")
         traffic_type = core_selectors.selection_traffic_type(workspace["id"])
 
         (treatments, baseline) = definition_selectors.select_treatments()

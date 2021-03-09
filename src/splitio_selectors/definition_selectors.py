@@ -14,7 +14,7 @@ def manage_definition(workspace, split, environment):
             title = "Managing " + split["name"] + " in " + environment["name"]
 
             options = []
-            options.append({"option_name": "Show definition", "operation": lambda: show_definition(definition)})
+            options.append({"option_name": "Show full definition JSON", "operation": lambda: show_definition_json(definition)})
             options.append({"option_name": "Target keys", "operation": lambda: target_keys(workspace, split, environment, definition)})
             options.append({"option_name": "Target segments", "operation": lambda: target_segments(workspace, split, environment, definition)})
             options.append({"option_name": "Ramp split", "operation": lambda: ramp_split(workspace, split, environment, definition)})
@@ -25,6 +25,7 @@ def manage_definition(workspace, split, environment):
             options.append({"option_name": "Delete definition", "go_back": True, "operation": lambda: delete_definition(workspace, split, environment)})
             options.append({"option_name": "Go back", "go_back": True})
 
+            show_definition(definition)
             _, go_back = menu.select_operation(title, options)
             if go_back:
                 return
@@ -49,8 +50,49 @@ def treatments_validator(treatments):
     else:
         return None
 
+def show_definition_json(definition):
+    menu.info_message(json.dumps(definition, indent=4))
+
 def show_definition(definition):
-    menu.info_message("Definition: " + json.dumps(definition, indent=4))
+    output = ""
+
+    # Targeting Lists
+    for treatment in definition.get("treatments",[]):
+        treatment_name = treatment["name"]
+        segments = treatment.get("segments",[])
+        if(len(segments) > 0):
+            segment_string = ", ".join(segments)
+            output += f"\nTargeting '{treatment_name}' to segments: {segment_string}"
+        keys = treatment.get("keys",[])
+        if(len(keys) > 0):
+            key_string = ", ".join(keys)
+            output += f"\nTargeting '{treatment_name}' to keys: {key_string}"
+    
+    # Traffic Allocation
+    default_treatment = definition["defaultTreatment"]
+    allocation = definition.get("trafficAllocation",100)
+    if allocation < 100:
+        output += f"\nAllocating {allocation}% of traffic to {default_treatment}"
+    
+    # Rules
+    for rule in definition.get("rules",[]):
+        rule_string = json.dumps(rule, indent=4)
+        output += f"\n{rule_string}"
+    
+    # Default Rule
+    buckets = []
+    for bucket in definition.get("defaultRule",[]):
+        treatment = bucket["treatment"]
+        size = bucket["size"]
+        buckets.append(f"{size}% {treatment}")
+    bucket_string = ", ".join(buckets)
+    output += f"\nDefault Rule: {bucket_string}"
+    
+    if definition.get("killed",False):
+        output += f"\n\nThis Split has been killed. Serving '{default_treatment}' to all keys"
+        menu.warn_message(output)
+    else:
+        menu.info_message(output)
 
 def get_definition(workspace, split, environment):
     try:
