@@ -28,8 +28,8 @@ def manage_segments():
 
 def create_segment(workspace):
     try:
-        segment_name = menu.text_input("Enter a name for your segment: ")
-        segment_description = menu.text_input("Enter a description for your segment: ")
+        segment_name = menu.text_input("Enter a name for your segment")
+        segment_description = menu.text_input("Enter a description for your segment")
         traffic_type = core_selectors.selection_traffic_type(workspace["id"])
 
         segments_api.create_segment(workspace["id"], traffic_type["name"], segment_name, segment_description)

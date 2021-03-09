@@ -51,6 +51,7 @@ def select_operation(title, options, name_field="option_name"):
     return (result, selection.get("go_back", False))
 
 def select(title, options, name_field=None):
+    print("") # Add some space
     if name_field is not None:
         options = [ (option[name_field],option) for option in options ]
     questions = [
