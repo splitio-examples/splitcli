@@ -85,7 +85,7 @@ def show_definition(definition):
     output += f"\nDefault Rule: {bucket_string}"
     
     if definition.get("killed",False):
-        output += f"\n\nThis Split has been killed. Serving {default_treatment} to all keys"
+        output += f"\n\nThis Split has been killed. Serving '{default_treatment}' to all keys"
         menu.warn_message(output)
     else:
         menu.info_message(output)
