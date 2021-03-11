@@ -20,9 +20,10 @@ The Split CLI is a Command Line Interface built to simplify onboarding, and make
 
 # Getting Started
 
-1. Clone this repo
-
-2. Run `splitcli`
+sh
+```pip install cli
+   splitcli
+``` 
 
 ## New Split Users
 
