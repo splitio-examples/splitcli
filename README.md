@@ -23,7 +23,7 @@ Throughout the CLI, to select an option, press the Enter/Return button on your k
 # Getting Started
 
 ```sh
-pip install cli
+python -m pip install -e .
 splitcli
 ``` 
 
