@@ -13,25 +13,25 @@
 
 The Split CLI is a Command Line Interface built to simplify onboarding, and make it easy to manage your entire feature flag lifecycle. 
 
-### 🏠 [Split Homepage](www.split.io)
+# 🏠 [Split Homepage](www.split.io)
 
-## Getting Started
+# Getting Started
 
 1. Clone this repo
 
 2. Run `splitcli`
 
-# New Split Users
+## New Split Users
 
 Upon running `splitcli`, the CLI will ask you if you have an existing account. Users who are new to Split should select the first option `No, I need to create an account` to create an account. You will be prompted to enter your first name, last name, email address, and phone number. You will then recieve a 6 digit one time password to authenticate. 
 
-# Existing Split Users
+## Existing Split Users
 
 If you have a Split account already, select `Yes, take me to sign in` from the initial prompt. You will then enter your email address, followed by your Admin API Key, which can be found in the Admin Settings of your Split profile. For more information on finding your Admin API Key, follow the directions [here](https://www.youtube.com/watch?v=80Bz2ZcZUrs).
 
-## Main Menu
+# Main Menu
 
-# Manage Splits
+## Manage Splits
 
 A split is another name for a feature flag, which allows you to separate code deployment from feature release. When you select `Manage Splits` from the Main Menu, you will see a list of the splits that are already in your organization, as well as the option to create a new split. 
 
@@ -39,9 +39,9 @@ To create a new split, select `Create a new split` from the menu. You will then 
 
 You will then choose which environment you wish to manage your split in. 
 
-From the `Managing Split in Environment` Menu, you can configure your split. The first option is to show the full JSON definition of your split, which will output the JSON into your terminal. You can also target keys (users) by selecting `Target keys`. You can also target segments of users by selecting `Target segments`
+From the `Managing Split in Environment` Menu, you can configure your split. The first option is to show the full JSON definition of your split, which will output the JSON into your terminal. You can also target keys (users) by selecting `Target keys`. You can also target segments of users by selecting `Target segments`.
 
-# Manage Segments
+## Manage Segments
 
 Segments are groups of users that you can use to target in your feature flags. When you select `Manage Segments` from the Main Menu, you will see a list of the segments that are already in your organization, as well as the option to create a new segment.
 
@@ -49,20 +49,20 @@ To create a new segment, select `Create a new segment` from the menu. You will t
 
 To delete a segment, navigate into the segment you wish to delete, and select `Delete segment`.
 
-# Manage Metrics
+## Manage Metrics
 
-# Manage Organization
+## Manage Organization
 
-# Log Out
+## Log Out
 
 Selecting Log Out will log you out of the CLI.
 
-# Exit
+## Exit
 
 Selecting Exit will exit out of the CLI.
 
 
-## Authors
+# Authors
 
 👤 **Talia Nassi**
 
