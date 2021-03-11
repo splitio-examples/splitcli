@@ -11,9 +11,12 @@
   </a>
 </p>
 
-The Split CLI is a Command Line Interface built to simplify onboarding, and make it easy to manage your entire feature flag lifecycle. 
+The Split CLI is a Command Line Interface built to simplify onboarding, and make it easy to manage your entire feature flag lifecycle. The changes and updates you make to your splits through the CLI will be reflected immediately in the Split UI.
+
+```Throughout the CLI, to select an option, press the Enter/Return button on your keyboard unless otherwise noted```
 
 # 🏠 [Split Homepage](www.split.io)
+# 📚 [Split Docs](https://help.split.io/hc/en-us)
 
 # Getting Started
 
@@ -39,7 +42,37 @@ To create a new split, select `Create a new split` from the menu. You will then 
 
 You will then choose which environment you wish to manage your split in. 
 
-From the `Managing Split in Environment` Menu, you can configure your split. The first option is to show the full JSON definition of your split, which will output the JSON into your terminal. You can also target keys (users) by selecting `Target keys`. You can also target segments of users by selecting `Target segments`.
+### Show Full Definition JSON
+
+Selecting this option will output the full JSON configuration of your split into your terminal. 
+
+### Target Keys
+
+Selecting this option will allow you to target users into your feature flag. You will select which treatment you are targeting, then add the users.
+
+### Target Segments
+
+Selecting this option will allow you to target a segmented user goup to your feature flag. First select which treatment you are targeting, then select the segments you wish to target by pressing the space bar. 
+
+### Ramp Split
+
+Ramp split allows you to ramp up your split to a specific percentage of users. After selecting this option, you will be prompted to enter percentage of the userbase you wish to be in the ON treatment. 
+
+### Kill Split
+
+Killing a split turns the feature off in the environment you select. To kill a split, navigate to the split, and select `Kill` from the menu.
+
+### Restore Split
+
+Restoring a split turns the split back on after it was killed. Your previous configurations for the Split will still be in place. To restore your split after it has been killed, select `Restore` from the menu.
+
+### Delete Definition
+
+Deleting a split's definition will remove all targeting rules from the split. To delete a split's definition, select `Delete definition` from the menu.
+
+### Delete Split
+
+Once your Split has met its [definition of done](https://www.split.io/blog/feature-flag-done-definition/), it can be deleted. To delete a split, select `Delete split` from the menu. This will delete the split in all environments.
 
 ## Manage Segments
 
