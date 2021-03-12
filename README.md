@@ -1,6 +1,5 @@
 # Welcome to the Split CLI 👋
 
-
 The Split CLI is a Command Line Interface built to simplify onboarding, and make it easy to manage your entire feature flag lifecycle. The changes and updates you make to your splits through the CLI will be reflected immediately in the Split UI.
 
 ---
@@ -10,7 +9,9 @@ Throughout the CLI, to select an option, press the Enter/Return button on your k
 # 🏠 [Split Homepage](www.split.io)
 # 📚 [Split Docs](https://help.split.io/hc/en-us)
 
-# Getting Started
+## Getting Started
+
+**Note:** Python >=3.6 is required to use the CLI
 
 ```sh
 python -m pip install -e .
