@@ -1,4 +1,4 @@
-#Welcome to the Split CLI 👋
+# Welcome to the Split CLI 👋
 
 
 The Split CLI is a Command Line Interface built to simplify onboarding, and make it easy to manage your entire feature flag lifecycle. The changes and updates you make to your splits through the CLI will be reflected immediately in the Split UI.
