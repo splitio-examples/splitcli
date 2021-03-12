@@ -1,15 +1,5 @@
-<h1 align="center">Welcome to the Split CLI 👋</h1>
-<p>
-  <a href="https://twitter.com/talia_nassi" target="_blank">
-    <img alt="Twitter: talia_nassi" src="https://img.shields.io/twitter/follow/talia_nassi.svg?style=social" />
-  </a>
-  <a href="https://twitter.com/HenryJewkes" target="_blank">
-    <img alt="Twitter: HenryJewkes" src="https://img.shields.io/twitter/follow/HenryJewkes.svg?style=social" />
-  </a>
-  <a href="https://twitter.com/afitnerd" target="_blank">
-    <img alt="Twitter: afitnerd" src="https://img.shields.io/twitter/follow/afitnerd.svg?style=social" />
-  </a>
-</p>
+#Welcome to the Split CLI 👋
+
 
 The Split CLI is a Command Line Interface built to simplify onboarding, and make it easy to manage your entire feature flag lifecycle. The changes and updates you make to your splits through the CLI will be reflected immediately in the Split UI.
 
