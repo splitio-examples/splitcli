@@ -1,106 +1,139 @@
 from scipy import stats
-import numpy as np
+from collections import namedtuple
 import math
 
-from experiment.measurement.normal_supplier import NormalSupplier
-from experiment.measurement.count_supplier import CountSupplier
-
-from experiment.event_generator import EventGenerator
+Impact = namedtuple('Impact', ['delta','p_value','mean'])
 
 class EventResult(object):
-	def __init__(self, eventType, properties, sample):
-		super(EventResult, self).__init__()
-		self.sample = sample
-		self.eventType = eventType
-		self.properties = properties
-		# TODO: Change below to a random non-significant default
-		self.probability_base = 1
-		self.probability_impact = 0
-		self.value_mean_base = 0
-		self.value_impact = 0
-		self.value_pval = .95
-		self.count_mean_base = 0
-		self.count_impact = 0
-		self.count_pval = .95
-		self.is_sum = None
-        self.mean_comparison = self.get_mean_comparison()
-        self.deviation = self.get_deviation(self.mean_comparison)
+    def __init__(self, event_type, properties, total_sample):
+        super(EventResult, self).__init__()
+        self.total_sample = total_sample
+        self.event_type = event_type
+        self.properties = properties
+        self.is_total = None
+        self.probability_impact = Impact(0, 1, 1)
+        self.count_impact = Impact(0, 1, 1)
+        self.value_impact = Impact(0, 1, 0)
 
-	def probability(self, impact, base=0.5):
-		self.probability_base = base
-		self.probability_impact = impact
-		return self
+    def probability(self, delta=0, p_value=1, mean=1):
+        self.probability_impact = Impact(delta, p_value, mean)
+        return self
 
-	def count(self, impact, pval, base=5):
-		self.count_mean_base = base
-		self.count_impact = impact
-		self.count_pval = pval
-		return self
+    def count(self, delta=0, p_value=1, mean=1):
+        self.count_impact = Impact(delta, p_value, mean)
+        return self
 
-	def value(self, impact, pval, base=5):
-		if self.is_sum is not None:
-			raise ValueError("Value for EventResult is already defined")
-		self.value_mean_base = base
-		self.value_impact = impact
-		self.value_pval = pval
-		self.is_sum = False
-		return self
+    def average(self, delta=0, p_value=1, mean=0):
+        if self.is_total is not None:
+            raise ValueError("Can not set both total and average")
+        self.value_impact = Impact(delta, p_value, mean)
+        self.is_total = False
+        return self
 
-	def sum(self, impact, pval, base=5):
-		if self.is_sum is not None:
-			raise ValueError("Value for EventResult is already defined")
-		self.value_mean_base = base
-		self.value_impact = impact
-		self.value_pval = pval
-		self.is_sum = True
-		return self
+    def total(self, delta=0, p_value=1, mean=0):
+        if self.is_total is not None:
+            raise ValueError("Can not set both total and average")
+        self.value_impact = Impact(delta, p_value, mean)
+        self.is_total = True
+        return self
 
-	def generators(self):
-		# Probabilities
-		comparison_probability = min(self.probability_base * (1 + self.probability_impact/100), 1.0)
-		# Counts
-		count_result = MeansResult(self.count_mean_base, self.count_impact, self.count_pval, self.sample)
-		base_counts = count_result.base_counts(self.probability_base)
-		comparison_counts = count_result.comparison_counts(comparison_probability)
-		# Values
-		value_result = MeansResult(self.value_mean_base, self.value_impact, self.value_pval, self.sample)
-		base_values = value_result.base_values()
-		comparison_values = value_result.comparison_values()
+    def base_events(self, base_sample):
+        return self.events(base_sample)
 
-		base_generator = EventGenerator(self.eventType, self.properties, base_counts, base_values, is_sum=self.is_sum)
-		comparison_generator = EventGenerator(self.eventType, self.properties, comparison_counts, comparison_values, is_sum=self.is_sum)
-		return (base_generator, comparison_generator)
+    def comp_events(self, comp_sample):
+        p_impact = self.probability_impact.delta
+        c_impact = self.count_impact.delta
+        v_impact = self.value_impact.delta
+        return self.events(comp_sample, p_impact=p_impact, c_impact=c_impact, v_impact=v_impact)
 
-    def get_mean_comparison(self):
-        return self.mean_base * (1.0 + self.impact/100.0)
+    def events(self, treatment_sample, p_impact=0, c_impact=0, v_impact=0):
+        p_mean = min(1, self.probability_impact.mean * (1 + p_impact))
+        non_zeros = int(treatment_sample * p_mean)
+        
+        (count_x, count_y) = self.count_range(treatment_sample, p_impact, c_impact)
+        (value_x, value_y) = self.value_range(treatment_sample, p_impact, v_impact)
 
-	
-	def mean_lower_bound(self):
-		relative_deviation = self.get_relative_deviation()
-		return relative_deviation * (sample - 1) / sample * probability / (1 - probability)
+        events = []
+        for i in range(non_zeros):
+            count = count_x
+            if i%2 == 0:
+                count = count_y
+            
+            value = value_x
+            if i%4 < 2:
+                value = value_y
+            if self.is_total:
+                value = value / count
+            events.append((count, value))
+        
+        for _ in range(non_zeros, treatment_sample):
+            events.append((0,0))
 
-    def base_values(self):
-        return NormalSupplier(self.mean_base, self.deviation)
+        return events
+    
+    def count_range(self, treatment_sample, p_impact=0, c_impact=0):
+        p_mean = min(1, self.probability_impact.mean * (1 + p_impact))
+        non_zeros = int(treatment_sample * p_mean)
+        (target_x, target_y) = self.calculate_range(self.count_impact.delta, self.count_impact.p_value, treatment_sample, p_mean)
+        
+        # Adjust range to suit mean value
+        target_sum = self.count_impact.mean * non_zeros
+        actual_sum = math.ceil(non_zeros/2) * target_x + math.floor(non_zeros/2) * target_y
+        mean_adjustment = target_sum / actual_sum
 
-    def comparison_values(self):
-        return NormalSupplier(self.mean_comparison, self.deviation)
+        # Adjust range to provide whole numbers
+        mean_adj_x = target_x * mean_adjustment
+        whole_adjustment = max(1, round(mean_adj_x)) / target_x
 
-    def base_counts(self, probability):
-        return CountSupplier(self.mean_base, self.deviation, probability)
+        # Shift means to introduce impact
+        mean_shift = round(whole_adjustment * c_impact)
 
-    def comparison_counts(self, probability):
-        return CountSupplier(self.mean_comparison, self.deviation, probability)
+        # Adjust and shift range
+        count_x = int(whole_adjustment * target_x + mean_shift)
+        count_y = int(round(whole_adjustment * target_y) + mean_shift)
+        return (count_x, count_y)
+    
+    def value_range(self, treatment_sample, p_impact=0, v_impact=0):
+        p_mean = min(1, self.probability_impact.mean * (1 + p_impact))
+        non_zeros = int(treatment_sample * p_mean)
 
-    def get_relative_deviation(self, impact, pval, sample):
-        t_out = stats.t.isf(pval/2.0, sample-2)
-        relative_deviation = math.sqrt((sample * impact * impact) / (t_out * t_out * 4.0))
-        return relative_deviation
-	
+        (target_x, target_y) = (1,1)
+        if self.is_total:
+            # Accommodate zeros
+            (target_x, target_y) = self.calculate_range(self.value_impact.delta, self.value_impact.p_value, treatment_sample, p_mean)
+        else:
+            # Ignore Zeros
+            (target_x, target_y) = self.calculate_range(self.value_impact.delta, self.value_impact.p_value, non_zeros)
+        
+        # Adjust range to suit mean value
+        target_sum = self.value_impact.mean * non_zeros
+        actual_sum = math.ceil(non_zeros/2) * target_x + math.floor(non_zeros/2) * target_y
+        mean_adjustment = target_sum / actual_sum
 
+        # Shift means to introduce impact
+        mean_shift = mean_adjustment * v_impact
 
-	def average(sample, impact, significance, shift=1):
-		deviation = get_relative_deviation(impact, significance, sample)
-		base_lower = shift - shift * deviation
-		base_upper = shift + shift * deviation
-		comp_lower = shift * (1+impact) - shift * deviation
-		comp_upper = shift * (1+impact) + shift * deviation
+        # Adjust and shift range
+        value_x = mean_adjustment * target_x + mean_shift
+        value_y = mean_adjustment * target_y + mean_shift
+        return (value_x, value_y)
+    
+    # Derivation from: https://www.wolframalpha.com/input/?i=c%3Dn*p%2F2%2C+%28u*s%29%5E2%3D%28c*%28x-u%29%5E2%2Bc*%28y-u%29%5E2%2B%28n*%281-p%29%29*u%5E2%29%2F%28n-1%29%2C+u%3Dc*%28x%2By%29%2Fn%2C+p%3E0%2C+p%3C%3D1%2C+n%3E1%2C+u%3D1%2C+s%3E0+solve+for+x%2Cy
+    def calculate_range(self, delta, p_value, treatment_sample, probability=1.0):
+        if delta == 0:
+            return (1,1)
+        if probability == 0 or treatment_sample <= 1:
+            raise ValueError("Sample must have multiple non-zero entries")
+
+        # Calculate Variance
+        t_out = stats.t.isf(p_value/2.0, self.total_sample-2)
+        variance = (self.total_sample * delta**2) / (t_out**2 * 4.0)
+
+        min_variance = treatment_sample * (1 - probability) / (probability * (treatment_sample - 1))
+        if variance < min_variance:
+            raise ValueError(f"Variance is too small for requested zeros: delta={delta} pvalue={p_value} probability={probability} var={variance} min={min_variance}")
+
+        magic = probability * (variance * (1 - 1 / treatment_sample) + 1) - 1
+        x = (1 - math.sqrt(magic))/probability
+        y = (1 + math.sqrt(magic))/probability
+        return (x, y)

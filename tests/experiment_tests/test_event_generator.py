@@ -5,14 +5,13 @@ import itertools
 import pytest
 
 def test_probability():
-    sample = 1000
+    sample = 10
     base_client = TrackingClient()
     comp_client = TrackingClient()
-    (base, comp) = EventResult("test", {}, sample).probability(0.5, 10).generators()
-
-    for i in range(sample):
-        base.events(base_client, f"off_{i}", i)
-        comp.events(comp_client, f"on_{i}", i)
+    
+    result = EventResult("test", {}, sample).probability(.10, .5, 0.5)
+    result.track_base(base_client)
+    result.track_comp(comp_client)
 
     assert base_client.rate_mean(sample) == 0.5
     assert base_client.count_mean(sample) == 0.5
@@ -25,17 +24,19 @@ def test_probability():
     assert comp_client.average_mean(sample) == 0.0
 
 def test_count():
-    sample = 1000
+    sample = 100
     base_client = TrackingClient()
     comp_client = TrackingClient()
-    (base, comp) = EventResult("test", {}, sample).count(4, 25, 0.5).generators()
     
-    for i in range(sample):
-        base.events(base_client, i, i)
-        comp.events(comp_client, i, i)
+    result = EventResult("test", {}, sample).count(.25, 0.2, 100)
+    result.track_base(base_client)
+    result.track_comp(comp_client)
+
+    print({"variance": base_client.count_variance(sample)})
 
     assert base_client.rate_mean(sample) == 1.0
     assert base_client.count_mean(sample) == pytest.approx(4.0, rel=0.05)
+    assert base_client.count_variance(sample) == 0
     assert base_client.sum_mean(sample) == 0.0
     assert base_client.average_mean(sample) == 0.0
 
@@ -48,11 +49,12 @@ def test_count_prob():
     sample = 1000
     base_client = TrackingClient()
     comp_client = TrackingClient()
-    (base, comp) = EventResult("test", {}, sample).probability(0.5, 10).count(4, 25, 0.5).generators()
     
-    for i in range(sample):
-        base.events(base_client, i, i)
-        comp.events(comp_client, i, i)
+    result = EventResult("test", {}, sample).probability(.50, .5, 0.5).count(.25, 0.005, 100)
+    result.track_base(base_client)
+    result.track_comp(comp_client)
+    
+    print({"variance": base_client.count_variance(sample)})
 
     assert base_client.rate_mean(sample) == 0.5
     assert base_client.count_mean(sample) == pytest.approx(4.0, rel=0.05)
@@ -64,28 +66,21 @@ def test_count_prob():
     assert comp_client.sum_mean(sample) == 0.0
     assert comp_client.average_mean(sample) == 0.0
 
-def test_count_error():
-    sample = 10000
-    base_client = TrackingClient()
-    comp_client = TrackingClient()
-    (base, comp) = EventResult("test", {}, sample).probability(.02,40).count(1.5, 10, .9).value(0,0,1).generators()
+# def test_count_error():
+#     sample = 10000
+#     base_client = TrackingClient()
+#     comp_client = TrackingClient()
     
-    for i in range(sample):
-        base.events(base_client, i, i)
-        comp.events(comp_client, i, i)
-    
-    print(base.count_supplier.__dict__)
-    print(comp.count_supplier.__dict__)
+#     result = EventResult("test", {}, sample).probability(.4, 1, .02).count(.10, .9, 1.5).value(0,1,0)
+#     result.track_base(base_client)
+#     result.track_comp(comp_client)
 
-    print(base.count_supplier.idealNextForMean())
-    print(base.count_supplier.sampleInterval())
+#     assert base_client.rate_mean(sample) == 0.02
+#     assert base_client.count_mean(sample) == pytest.approx(1.5, rel=0.05)
+#     assert base_client.sum_mean(sample) == 0.0
+#     assert base_client.average_mean(sample) == 0.0
 
-    assert base_client.rate_mean(sample) == 0.02
-    assert base_client.count_mean(sample) == pytest.approx(1.5, rel=0.05)
-    assert base_client.sum_mean(sample) == 0.0
-    assert base_client.average_mean(sample) == 0.0
-
-    assert comp_client.rate_mean(sample) == 0.028
-    assert comp_client.count_mean(sample) == pytest.approx(1.65, rel=0.05)
-    assert comp_client.sum_mean(sample) == 0.0
-    assert comp_client.average_mean(sample) == 0.0
+#     assert comp_client.rate_mean(sample) == 0.028
+#     assert comp_client.count_mean(sample) == pytest.approx(1.65, rel=0.05)
+#     assert comp_client.sum_mean(sample) == 0.0
+#     assert comp_client.average_mean(sample) == 0.0

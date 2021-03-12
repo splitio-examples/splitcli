@@ -51,4 +51,5 @@ def delete_split(workspace_id, split_name):
 def delete_all_splits(workspace_id):
     all_splits = list_splits(workspace_id)
     for split in all_splits:
-        delete_split(workspace_id, split["name"])
+        if split["name"] != "onboarding_flow_v3":
+            delete_split(workspace_id, split["name"])
