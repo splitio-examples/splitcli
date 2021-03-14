@@ -63,6 +63,7 @@ def select(title, options, name_field=None):
     return answers['result']
 
 def checkbox(title, options, selections, name_field=None):
+    title += " [space to select]"
     if name_field is not None:
         options = [ (option[name_field], option) for option in options ]
     questions = [ inquirer.Checkbox('result', message=title, choices=options, default=selections) ]
