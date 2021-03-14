@@ -89,10 +89,10 @@ def manage_instance(workspace, segment_name, environment):
             title = "Managing " + segment["trafficType"]["name"] + " segment \"" + segment_name + "\" in " + environment["name"]
 
             options = []
-            options.append({"option_name": "Show keys", "operation": lambda: show_keys(segment_name, environment)})
-            options.append({"option_name": "Add keys", "operation": lambda: add_keys(segment_name, environment)})
-            options.append({"option_name": "Remove keys", "operation": lambda: remove_keys(segment_name, environment)})
-            options.append({"option_name": "Upload CSV", "operation": lambda: upload_csv(segment_name, environment)})
+            # options.append({"option_name": "Show keys", "operation": lambda: show_keys(segment_name, environment)})
+            # options.append({"option_name": "Add keys", "operation": lambda: add_keys(segment_name, environment)})
+            # options.append({"option_name": "Remove keys", "operation": lambda: remove_keys(segment_name, environment)})
+            # options.append({"option_name": "Upload CSV", "operation": lambda: upload_csv(segment_name, environment)})
             options.append({"option_name": "Go back", "go_back": True})
 
             _, go_back = menu.select_operation(title, options)

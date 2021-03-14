@@ -26,8 +26,8 @@ def knownUserPrompt(user):
     options = [
         {"option_name": "Manage Splits", "operation": manage_splits},
         {"option_name": "Manage Segments", "operation": manage_segments},
-        {"option_name": "Manage Metrics", "operation": manage_metrics},
-        {"option_name": "Manage Organization", "operation": manage_organization},
+        # {"option_name": "Manage Metrics", "operation": manage_metrics},
+        # {"option_name": "Manage Organization", "operation": manage_organization},
         {"option_name": "Log Out", "operation": lambda: user.delete()},
         {"option_name": "Exit", "operation": exit}
     ]
