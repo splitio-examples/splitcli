@@ -1,5 +1,0 @@
-accounts
-config
-splitio
-splitio_selectors
-templates
