@@ -3,11 +3,7 @@ import pathlib
 
 here = pathlib.Path(__file__).parent.resolve()
 
-# Get the long description from the README file
 long_description = (here / 'README.md').read_text(encoding='utf-8')
-
-# Arguments marked as "Required" below must be included for upload to PyPI.
-# Fields marked as "Optional" may be commented out.
 
 setup(
     name='splitcli',
@@ -18,7 +14,7 @@ setup(
     url='https://github.com/splitio-examples/splitcli',
     author='Henry Jewkes &  Talia Nassi & Micah Silverman',
     author_email='info@split.io',
-    classifiers=[  # Optional
+    classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Feature Flags',
@@ -30,20 +26,20 @@ setup(
         'Programming Language :: Python :: 3 :: Only',
     ],
     keywords='development, split, feature flags',
-    package_dir={'': 'src'},  # Optional
+    package_dir={'': 'src'},
     packages=find_packages(where='src'),
     python_requires='>=3.6, <4',
     install_requires=['requests', 'python-inquirer', 'art', 'inquirer'],
-    extras_require={  # Optional
+    extras_require={
         'dev': ['check-manifest'],
         'test': ['coverage'],
     },
-    entry_points={  # Optional
+    entry_points={
         'console_scripts': [
             'splitcli=splitcli:main',
         ],
     },
-    project_urls={  # Optional
+    project_urls={
         'Bug Reports': 'https://github.com/splitio-examples/splitcli/issues',
         'Source': 'https://github.com/splitio-examples/splitcli',
     },
