@@ -27,7 +27,7 @@ setup(
     ],
     keywords='development, split, feature flags',
     package_dir={'': 'src'},
-    packages=find_packages(where='src'),
+    packages=find_packages(),
     python_requires='>=3.6, <4',
     install_requires=['requests', 'python-inquirer', 'art', 'inquirer'],
     extras_require={
