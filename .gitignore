@@ -5,9 +5,5 @@ __pycache__/
 .vscode
 *.egg-info
 split_internal
-<<<<<<< HEAD
-dist/
-=======
 dist
 build
->>>>>>> cab396f2d0e4923db2c0f18a1184ddcee93939c7

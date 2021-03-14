@@ -1,6 +1,6 @@
 import requests
-import config
 
+import config
 from ux import menu
 from accounts.user import User
 
