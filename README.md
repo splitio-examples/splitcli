@@ -1,23 +1,3 @@
-<<<<<<< HEAD
-<h1 align="center">Welcome to the Split CLI 👋</h1>
-<p>
-  <a href="https://twitter.com/talia_nassi" target="_blank">
-    <img alt="Twitter: talia_nassi" src="https://img.shields.io/twitter/follow/talia_nassi.svg?style=social" />
-  </a>
-</p>
-
-The Split CLI is a Command Line Interface to make it easier for developers to manage their feature flags
-
-### 🏠 [Homepage](www.split.io)
-
-## Running the CLI
-
-```sh
-splitcli
-```
-
-## Authors
-=======
 # Welcome to the Split CLI 👋
 
 The Split CLI is a Command Line Interface built to simplify onboarding, and make it easy to manage your entire feature flag lifecycle. The changes and updates you make to your splits through the CLI will be reflected immediately in the Split UI.
@@ -110,7 +90,6 @@ Selecting Exit will exit out of the CLI.
 
 
 # Authors
->>>>>>> main
 
 👤 **Talia Nassi**
 
