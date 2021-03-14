@@ -2,14 +2,14 @@ from art import text2art
 import argparse
 import sys
 
-from splitio_selectors.split_selectors import manage_splits
-from splitio_selectors.segment_selectors import manage_segments
-from splitio_selectors.metric_selectors import manage_metrics
-from splitio_selectors.organization_selectors import manage_organization
-from accounts.user import get_user, sign_in
-from accounts import signup
-import config
-from ux import menu, text
+from splitcli.splitio_selectors.split_selectors import manage_splits
+from splitcli.splitio_selectors.segment_selectors import manage_segments
+from splitcli.splitio_selectors.metric_selectors import manage_metrics
+from splitcli.splitio_selectors.organization_selectors import manage_organization
+from splitcli.accounts.user import get_user, sign_in
+from splitcli.accounts import signup
+from splitcli.ux import menu, text
+import splitcli.config
 
 
 def initial_prompt():

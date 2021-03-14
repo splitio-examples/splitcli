@@ -1,5 +1,5 @@
-from split_apis import http_client
-from split_apis.splits_api import split_metadata_url
+from splitcli.split_apis import http_client
+from splitcli.split_apis.splits_api import split_metadata_url
 
 def split_url(workspace_id, split_name, environment_name):
     base_url = split_metadata_url(workspace_id, split_name)

@@ -1,4 +1,4 @@
-from ux.hex_color import match_256
+from splitcli.ux.hex_color import match_256
 import re
 
 def set_theme(is_dark=True):

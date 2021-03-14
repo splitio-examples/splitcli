@@ -1,7 +1,7 @@
 import argparse
 import os
 from os.path import expanduser
-from ux import text
+from splitcli.ux import text
 
 SPLIT_CLI_BACKEND_URI = "https://split-cli-backend.herokuapp.com"
 SPLIT_CLI_BACKEND_API_URI = "/api/v1"

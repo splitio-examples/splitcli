@@ -1,8 +1,8 @@
 import requests
 
-import config
-from ux import menu
-from accounts.user import User
+import splitcli.config
+from splitcli.ux import menu
+from splitcli.accounts.user import User
 
 
 def verify_and_complete(firstname, lastname, email):

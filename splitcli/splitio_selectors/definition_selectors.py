@@ -1,8 +1,8 @@
 import json
 
-from split_apis import definitions_api, segments_api
-from templates import split_templates
-from ux import menu
+from splitcli.split_apis import definitions_api, segments_api
+from splitcli.templates import split_templates
+from splitcli.ux import menu
 
 def manage_definition(workspace, split, environment):
     while True:
