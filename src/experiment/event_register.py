@@ -6,6 +6,14 @@ def register_event(metric, delta=0, p_value=1, mean=1):
 
 values = []
 
+class EventSupplier(object):
+    def __init__(self, filters, probability_impact, count_impact):
+        super(EventSupplier, self).__init__()
+        self.property = property
+        self.is_total = None
+        self.delta = delta
+        self.p_value = p_value
+
 class EventValueSupplier(object):
     def __init__(self, property, delta, p_value, mean=1):
         super(EventValueSupplier, self).__init__()
@@ -17,7 +25,7 @@ class EventValueSupplier(object):
     def value_range(self, treatment_sample, p_mean, p_impact=0, v_impact=0):
         p_mean = min(1, p_mean * (1 + p_impact))
         non_zeros = int(treatment_sample * p_mean)
-
+                                                                                                                                                       
         (target_x, target_y) = (1,1)
         if self.is_total:
             # Accommodate zeros
