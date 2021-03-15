@@ -1,7 +1,7 @@
 import json
 import os
-import splitcli.config
 
+from splitcli import config
 from splitcli.split_apis import users_api
 from splitcli.ux import menu
 

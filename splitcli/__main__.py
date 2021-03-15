@@ -9,7 +9,7 @@ from splitcli.splitio_selectors.organization_selectors import manage_organizatio
 from splitcli.accounts.user import get_user, sign_in
 from splitcli.accounts import signup
 from splitcli.ux import menu, text
-import splitcli.config
+from splitcli import config
 
 
 def initial_prompt():

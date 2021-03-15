@@ -7,7 +7,7 @@ from splitcli.accounts.user import User
 
 def verify_and_complete(firstname, lastname, email):
     confirmation_code = menu.text_input(
-        "Please enter the 6 digit confirmation code sent to your phone: "
+        "Please enter the 6 digit confirmation code sent to your phone"
     )
     menu.info_message("Processing account creation...")
     menu.info_message("This could take up to one minute.")
@@ -24,10 +24,10 @@ def verify_and_complete(firstname, lastname, email):
 
 
 def create_account():
-    firstname = menu.text_input("Enter Your First Name: ")
-    lastname = menu.text_input("Enter Your Last Name: ")
-    email = menu.text_input("Enter Your Email Address: ")
-    phone = menu.text_input("Enter Your 10 Digit Phone Number: ")
+    firstname = menu.text_input("Enter Your First Name")
+    lastname = menu.text_input("Enter Your Last Name")
+    email = menu.text_input("Enter Your Email Address")
+    phone = menu.text_input("Enter Your 10 Digit Phone Number")
 
     menu.info_message("Setting up your account...")
     create_response = requests.post(
