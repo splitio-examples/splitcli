@@ -1,8 +1,11 @@
 import sys
 import time
+import threading
 
 from splitio import get_factory
 from splitio.exceptions import TimeoutException
+
+from splitcli.ux import menu
 
 connection_timeout = 5000
 queue_size = 1000000
@@ -12,20 +15,20 @@ all_count = 0
 class BatchClient(object):
 	def __init__(self, sdk_token):
 		super(BatchClient,self).__init__()
-		self.factory = None
 		try:
-			factory = get_factory(sdk_token,config={
+			self.factory = get_factory(sdk_token,config={
 				"connectionTimeout": connection_timeout,
 				"impressionsQueueSize": queue_size,
 				"eventsQueueSize": queue_size, 
 				"eventsBulkSize": bulk_size,
-				"impressionsBulkSize": bulk_size
+				"impressionsBulkSize": bulk_size,
+				"impressionsMode": "optimized"
 			})
-			factory.block_until_ready(20)
+			self.factory.block_until_ready(20)
 		except TimeoutException:
-			print("SDK failed to initialize")
+			menu.error_message("SDK failed to initialize")
 			sys.exit(1)
-		self.split_client = factory.client()
+		self.split_client = self.factory.client()
 
 	def get_treatment(self, key, feature):
 		global all_count
@@ -42,3 +45,8 @@ class BatchClient(object):
 			success = self.split_client.track(key, traffic_type, event_type, value, properties)
 			if not success:
 				time.sleep(.1)
+	
+	def destroy(self):
+		stop_event = threading.Event()
+		self.factory.destroy(stop_event)
+		stop_event.wait()

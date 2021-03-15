@@ -5,7 +5,7 @@ import math
 Impact = namedtuple('Impact', ['delta','p_value','mean'])
 
 class EventResult(object):
-    def __init__(self, event_type, properties, total_sample):
+    def __init__(self, event_type, properties, total_sample, property_value=None):
         super(EventResult, self).__init__()
         self.total_sample = total_sample
         self.event_type = event_type
@@ -14,6 +14,7 @@ class EventResult(object):
         self.probability_impact = Impact(0, 1, 1)
         self.count_impact = Impact(0, 1, 1)
         self.value_impact = Impact(0, 1, 0)
+        self.property_value = property_value
 
     def probability(self, delta=0, p_value=1, mean=1):
         self.probability_impact = Impact(delta, p_value, mean)
@@ -74,6 +75,11 @@ class EventResult(object):
     def count_range(self, treatment_sample, p_impact=0, c_impact=0):
         p_mean = min(1, self.probability_impact.mean * (1 + p_impact))
         non_zeros = int(treatment_sample * p_mean)
+
+        # All results are zeros
+        if non_zeros == 0:
+            return (0,0)
+
         (target_x, target_y) = self.calculate_range(self.count_impact.delta, self.count_impact.p_value, treatment_sample, p_mean)
         
         # Adjust range to suit mean value
@@ -96,6 +102,10 @@ class EventResult(object):
     def value_range(self, treatment_sample, p_impact=0, v_impact=0):
         p_mean = min(1, self.probability_impact.mean * (1 + p_impact))
         non_zeros = int(treatment_sample * p_mean)
+        
+        # All results are zeros
+        if non_zeros == 0:
+            return (0,0)
 
         (target_x, target_y) = (1,1)
         if self.is_total:

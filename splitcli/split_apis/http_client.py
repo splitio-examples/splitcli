@@ -1,33 +1,38 @@
 import requests
-import json
-import logging
-import http.client as internal_http_client
+import time
 
 from splitcli.accounts.user import get_user
+from splitcli.ux import menu
 
+max_retries = 3
 base_url = "https://api.split.io/internal/api/v2"
 
 
 def get(path):
-    response = requests.get(f"{base_url}/{path}", headers=headers())
-    return handle_response(response)
+    return execute_request(lambda: requests.get(f"{base_url}/{path}", headers=headers()))
 
 def delete(path):
-    response = requests.delete(f"{base_url}/{path}", headers=headers())
-    handle_response(response)
+    execute_request(lambda: requests.delete(f"{base_url}/{path}", headers=headers()))
 
 def post(path, content=None):
-    response = requests.post(f"{base_url}/{path}", headers=headers(), json=content)
-    return handle_response(response, content)
+    return execute_request(lambda: requests.post(f"{base_url}/{path}", headers=headers(), json=content))
 
 def put(path, content=None):
-    response = requests.put(f"{base_url}/{path}", headers=headers(), json=content)
-    return handle_response(response, content)
+    return execute_request(lambda: requests.put(f"{base_url}/{path}", headers=headers(), json=content))
 
 def put_file(path, file_path):
     with open(file_path, 'rb') as f:
-        response = requests.put(f"{base_url}/{path}", headers=headers(), files={file_path: f})
-        return handle_response(response)
+        return execute_request(lambda: requests.put(f"{base_url}/{path}", headers=headers(), files={file_path: f}))
+
+# Helper Functions
+
+def execute_request(operation):
+    retries = 0
+    while retries < max_retries:
+        (success, response) = handle_response(operation())
+        if success:
+            return response
+        retries += 1
 
 def headers():
     user = get_user()
@@ -39,10 +44,15 @@ def headers():
         'Authorization': "Bearer " + admin_api_key
     }
 
-def handle_response(response, payload=None):
+def handle_response(response):
+    if response.status_code == 429:
+        # Add a sleep
+        menu.warn_message("Requests are rate limited (max 30 per 10s). Waiting...")
+        time.sleep(10)
+        return (False, None)
     if response.status_code != 200:
         url = response.url
         status_code = str(response.status_code)
         result = str(response.json())
-        raise RuntimeError(f"Error with request: url={url} payload={payload} code={status_code} result={result}")
-    return response.json()
+        raise RuntimeError(f"Error with request: url={url} code={status_code} result={result}")
+    return (True, response.json())
