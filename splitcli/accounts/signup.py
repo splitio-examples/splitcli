@@ -49,7 +49,6 @@ def create_account():
         if (status == 403):
             menu.warn_message("Incorrect confirmation code. Please try again")
 
-    print(verify_response)
     if verify_response.status_code != 200:
         menu.error_message(verify_response.json())
         exit()
@@ -62,6 +61,6 @@ def create_account():
     )
     user.write()
     password = verify_response_json["password"]
-    menu.info_message(f"\nYour admin api key has been written to: {config_file}.")
+    menu.info_message(f"\nYour admin api key has been written to: {config.config_file}.")
     menu.info_message(f"Your email is: {email} and your assigned password is: {password}.")
     menu.info_message("Make note of your password as it will not be repeated. You can change your password by logging in to: https://app.split.io")
