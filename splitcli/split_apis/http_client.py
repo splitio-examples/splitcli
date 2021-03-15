@@ -3,7 +3,7 @@ import json
 import logging
 import http.client as internal_http_client
 
-from accounts.user import get_user
+from splitcli.accounts.user import get_user
 
 base_url = "https://api.split.io/internal/api/v2"
 

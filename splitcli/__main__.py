@@ -2,10 +2,10 @@ from art import text2art
 import argparse
 import sys
 
-from splitio_selectors import split_selectors, segment_selectors, metric_selectors, organization_selectors
-from accounts import signup, signin, user
-import config
-from ux import menu, text
+from splitcli.splitio_selectors import split_selectors, segment_selectors, metric_selectors, organization_selectors
+from splitcli.accounts import signup, user, signin
+from splitcli.ux import menu, text
+import splitcli.config
 
 
 def initial_prompt():
@@ -20,10 +20,10 @@ def initial_prompt():
 def knownUserPrompt(user):
     menu.info_message(text2art(f"Hi {user.firstname}!!!"))
     options = [
-        {"option_name": "Manage Splits", "operation": lambda x: split_selectors.manage_splits()},
-        {"option_name": "Manage Segments", "operation": lambda x: segment_selectors.manage_segments()},
-        {"option_name": "Manage Metrics", "operation": lambda x: metric_selectors.manage_metrics()},
-        {"option_name": "Manage Organization", "operation": lambda x: organization_selectors.manage_organization()},
+        {"option_name": "Manage Splits", "operation": split_selectors.manage_splits},
+        {"option_name": "Manage Segments", "operation": segment_selectors.manage_segments},
+        # {"option_name": "Manage Metrics", "operation": metric_selectors.manage_metrics},
+        # {"option_name": "Manage Organization", "operation": organization_selectors.manage_organization},
         {"option_name": "Log Out", "operation": lambda: user.delete()},
         {"option_name": "Exit", "operation": exit}
     ]

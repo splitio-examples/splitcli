@@ -72,13 +72,9 @@ Once your Split has met its [definition of done](https://www.split.io/blog/featu
 
 Segments are groups of users that you can use to target in your feature flags. When you select `Manage Segments` from the Main Menu, you will see a list of the segments that are already in your organization, as well as the option to create a new segment.
 
-To create a new segment, select `Create a new segment` from the menu. You will then be prompted to enter a name, and description for that segmented user group. Once that segment is created, you will see it listed in the `Manage Segments` menu. Select the segment you created, and choose which environment you wish to manage it in. Here, keys refer to the users in that group. To show the keys for the segment, select `Show keys`. To add keys for the segment, select `Add keys`. To remove keys for the segment, select `Remove keys`. You can also do a bulk upload of users with a CSV file by selecting `Upload CSV`.
+To create a new segment, select `Create a new segment` from the menu. You will then be prompted to enter a name, and description for that segmented user group. Once that segment is created, you will see it listed in the `Manage Segments` menu. Select the segment you created, and choose which environment you wish to manage it in. Here is where we will soon be adding key management capabilities, stay tuned!
 
 To delete a segment, navigate into the segment you wish to delete, and select `Delete segment`.
-
-## Manage Metrics
-
-## Manage Organization
 
 ## Log Out
 

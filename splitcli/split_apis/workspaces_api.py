@@ -1,4 +1,4 @@
-from split_apis import http_client
+from splitcli.split_apis import http_client
 
 def list_workspaces():
     path = 'workspaces'
