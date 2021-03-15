@@ -14,7 +14,7 @@ Throughout the CLI, to select an option, press the Enter/Return button on your k
 **Note:** Python >=3.6 is required to use the CLI
 
 ```sh
-python -m pip install -e .
+pip install splitcli
 splitcli
 ``` 
 
@@ -102,11 +102,6 @@ Selecting Exit will exit out of the CLI.
 * Twitter: [@afitnerd](https://twitter.com/afitnerd)
 * Github: [@dogeared](https://github.com/dogeared)
 
-## Build locally
-
-Split CLI requires Python 3.6 at minimum.
-
-## Coming soon to PyPi!
 
 ## Show your support
 
