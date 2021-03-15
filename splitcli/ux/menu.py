@@ -1,6 +1,6 @@
 import inquirer
 
-from ux import text
+from splitcli.ux import text
 
 # Logging
 

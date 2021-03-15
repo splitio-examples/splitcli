@@ -7,7 +7,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
     name='splitcli',
-    version='0.0.1',
+    version='0.0.4',
     description='Use Split.io from the command line',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -26,8 +26,7 @@ setup(
         'Programming Language :: Python :: 3 :: Only',
     ],
     keywords='development, split, feature flags',
-    package_dir={'': 'src'},
-    packages=find_packages(where='src'),
+    packages=find_packages(),
     python_requires='>=3.6, <4',
     install_requires=['requests', 'python-inquirer', 'art', 'inquirer'],
     extras_require={
@@ -36,7 +35,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'splitcli=splitcli:main',
+            'splitcli=splitcli.__main__:main',
         ],
     },
     project_urls={

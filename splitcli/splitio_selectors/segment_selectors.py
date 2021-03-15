@@ -1,6 +1,6 @@
-from split_apis import segments_api, environments_api
-from splitio_selectors import core_selectors
-from ux import menu
+from splitcli.split_apis import segments_api, environments_api
+from splitcli.splitio_selectors import core_selectors
+from splitcli.ux import menu
 
 def manage_segments():
     workspace = core_selectors.selection_workspace()

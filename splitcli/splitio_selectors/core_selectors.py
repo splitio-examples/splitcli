@@ -1,5 +1,5 @@
-from split_apis import workspaces_api, environments_api, traffic_types_api
-from ux import menu
+from splitcli.split_apis import workspaces_api, environments_api, traffic_types_api
+from splitcli.ux import menu
 
 
 def selection_environment(workspace_id):

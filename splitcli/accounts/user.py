@@ -1,9 +1,9 @@
 import json
 import os
-import config
+import splitcli.config
 
-from split_apis import users_api
-from ux import menu
+from splitcli.split_apis import users_api
+from splitcli.ux import menu
 
 _user_singleton = None
 
@@ -22,7 +22,7 @@ def set_user(new_user):
 
 def load_user():
     try:
-        with open(config.config_file, 'r') as f:
+        with open(splitcli.config.config_file, 'r') as f:
             dictionary = json.load(f)
             return User(dictionary["adminapi"], dictionary["orgID"], dictionary["userID"], dictionary["firstname"], dictionary["lastname"], dictionary["email"])
     except:
@@ -62,11 +62,11 @@ class User(object):
         return json.dumps(self.__dict__)
 
     def write(self):
-        with open(config.config_file, 'w') as f:
+        with open(splitcli.config.config_file, 'w') as f:
             json.dump(self.__dict__, f)
 
     def delete(self):
         global _user_singleton
         if os.path.exists(config.config_file):
-            os.remove(config.config_file)
+            os.remove(splitcli.config.config_file)
             _user_singleton = None
