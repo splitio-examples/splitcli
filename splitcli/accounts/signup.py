@@ -1,6 +1,6 @@
 import requests
 
-import splitcli.config
+from splitcli import config
 from splitcli.ux import menu
 from splitcli.accounts.user import User
 
@@ -13,7 +13,7 @@ def verify_and_complete(firstname, lastname, email):
     menu.info_message("This could take up to one minute.")
     # TODO - validate confirmation code is a 6-digit number
     verify_response = requests.post(
-        f"{splitcli.config.SPLIT_CLI_BACKEND_BASE_URL}/verify-and-complete", json={"fields": [
+        f"{config.SPLIT_CLI_BACKEND_BASE_URL}/verify-and-complete", json={"fields": [
             {"name": "firstname", "value": firstname},
             {"name": "lastname", "value": lastname},
             {"name": "email", "value": email},
@@ -31,7 +31,7 @@ def create_account():
 
     menu.info_message("Setting up your account...")
     create_response = requests.post(
-        f"{splitcli.config.SPLIT_CLI_BACKEND_BASE_URL}/create-and-enroll-user", json={"fields": [
+        f"{config.SPLIT_CLI_BACKEND_BASE_URL}/create-and-enroll-user", json={"fields": [
             {"name": "firstname", "value": firstname},
             {"name": "lastname", "value": lastname},
             {"name": "email", "value": email},
@@ -49,6 +49,7 @@ def create_account():
         if (status == 403):
             menu.warn_message("Incorrect confirmation code. Please try again")
 
+    print(verify_response)
     if verify_response.status_code != 200:
         menu.error_message(verify_response.json())
         exit()
@@ -61,6 +62,6 @@ def create_account():
     )
     user.write()
     password = verify_response_json["password"]
-    menu.info_message(f"\nYour admin api key has been written to: {splitcli.config.config_file}.")
+    menu.info_message(f"\nYour admin api key has been written to: {config_file}.")
     menu.info_message(f"Your email is: {email} and your assigned password is: {password}.")
     menu.info_message("Make note of your password as it will not be repeated. You can change your password by logging in to: https://app.split.io")
