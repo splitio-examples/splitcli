@@ -1,7 +1,7 @@
 import time
 
-from experiment.batch_client import BatchClient
-from experiment.event_result import EventResult
+from splitcli.experiment.batch_client import BatchClient
+from splitcli.experiment.event_result import EventResult
 
 class Experiment(object):
     def __init__(self, sample, feature, comp_treatment="on", key_pattern="user_{position}"):

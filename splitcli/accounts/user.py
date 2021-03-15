@@ -1,13 +1,7 @@
 import json
 import os
-import splitcli.config
 
-<<<<<<< HEAD:src/accounts/user.py
-from ux import menu
-=======
-from splitcli.split_apis import users_api
-from splitcli.ux import menu
->>>>>>> main:splitcli/accounts/user.py
+import splitcli.config
 
 _user_singleton = None
 

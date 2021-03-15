@@ -1,6 +1,6 @@
-from ux import menu
-from accounts import user
-from split_apis import users_api
+from splitcli.ux import menu
+from splitcli.accounts import user
+from splitcli.split_apis import users_api
 
 def sign_in():
     email = menu.text_input("Enter your email")
