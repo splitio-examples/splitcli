@@ -5,7 +5,7 @@ import sys
 from splitcli.splitio_selectors import split_selectors, segment_selectors, metric_selectors, organization_selectors
 from splitcli.accounts import signup, user, signin
 from splitcli.ux import menu, text
-import splitcli.config
+from splitcli import config
 
 
 def initial_prompt():
