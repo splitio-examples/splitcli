@@ -25,6 +25,8 @@ def list_splits(workspace_id):
             all_splits.extend(result)
         else:
             break
+        offset += limit
+
     return all_splits
 
 def list_splits_batch(workspace_id, offset, limit):
