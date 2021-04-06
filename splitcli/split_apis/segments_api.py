@@ -36,6 +36,8 @@ def list_segments(workspace_id):
             all_segments.extend(result)
         else:
             break
+        offset += limit
+
     return all_segments
 
 def list_segments_batch(workspace_id, offset, limit):
@@ -52,6 +54,8 @@ def list_segments_environment(workspace_id, environment_name):
             all_segments.extend(result)
         else:
             break
+        offset += limit
+            
     return all_segments
 
 def list_segments_environment_batch(workspace_id, environment_name, offset, limit):
