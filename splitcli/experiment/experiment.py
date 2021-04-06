@@ -4,22 +4,19 @@ from splitcli.experiment.batch_client import BatchClient
 from splitcli.experiment.event_result import EventResult
 
 class Experiment(object):
-    def __init__(self, sample, feature, comp_treatment="on", key_pattern="user_{position}"):
+    def __init__(self, sample, feature, comp_treatment="on", key_pattern="user_{position}", traffic_type="user"):
         super(Experiment, self).__init__()
         self.feature = feature
         self.comp_treatment = comp_treatment
         self.sample = sample
         self.key_pattern = key_pattern
         self.event_results = []
+        self.traffic_type = traffic_type
 
-    def event_result(self, eventType, properties, property_value=None):
-        return EventResult(eventType, properties, self.sample, property_value=property_value)
-
-    def register(self, event_result):
-        if self.sample != event_result.total_sample:
-            raise ValueError("Invalid sample size")
+    def register(self, eventType, properties={}, property_value=None):
+        event_result = EventResult(eventType, properties, self.sample, property_value=property_value)
         self.event_results.append(event_result)
-        return self
+        return event_result
 
     def key(self, position):
         return self.key_pattern.format(position=position)
@@ -35,8 +32,6 @@ class Experiment(object):
                 comp_sample += 1
             else:
                 base_sample += 1
-        
-        time.sleep(.001)
 
         for event_result in self.event_results:
             base_events = event_result.base_events(base_sample)
@@ -56,7 +51,7 @@ class Experiment(object):
                     properties = event_result.properties
                     if event_result.property_value is not None:
                         properties[event_result.property_value] = value
-                    self.track(batch_client, key, "user", event_result.event_type, properties, count, value)
+                    self.track(batch_client, key, self.traffic_type, event_result.event_type, properties, count, value)
                     comp_pos += 1
                 else:
                     if base_pos >= len(base_events):
@@ -66,11 +61,12 @@ class Experiment(object):
                     properties = event_result.properties
                     if event_result.property_value is not None:
                         properties[event_result.property_value] = value
-                    self.track(batch_client, key, "user", event_result.event_type, properties, count, value)
+                    self.track(batch_client, key, self.traffic_type, event_result.event_type, properties, count, value)
                     base_pos += 1
         
         batch_client.destroy()
     
     def track(self, split_client, key, traffic_type, event_type, properties, event_count, event_value):
-        for _ in range(0, event_count):
+        for _ in range(event_count):
+            time.sleep(.001)
             split_client.track(key, traffic_type, event_type, event_value, properties)

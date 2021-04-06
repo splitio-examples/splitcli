@@ -2,7 +2,6 @@ import json
 import os
 
 from splitcli import config
-from splitcli.split_apis import users_api
 from splitcli.ux import menu
 
 _user_singleton = None
