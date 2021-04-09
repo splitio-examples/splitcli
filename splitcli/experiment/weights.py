@@ -25,7 +25,7 @@ class Weights(object):
 
         # Weights are pairs between some value x and how many times that value appears in the data
         # { 1:5, 2:3, 5:2 } would mean a sample of [ 1 1 1 1 1 2 2 2 5 5 ]
-        # Initialize the sample weights to be a set of just 1s
+        # Initialize the sample weights to be all 1s
         self.weights = {}
         self.adjust(1, self.sample_size - self.zeros)
         self.apply_transforms()
