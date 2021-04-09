@@ -2,7 +2,6 @@ import time
 
 from splitcli.experiment.batch_client import BatchClient
 from splitcli.experiment.event_result import EventResult
-from splitcli.experiment.generator import events
 
 class Experiment(object):
     def __init__(self, sdk_token, feature, comp_treatment="on", key_pattern="user_{position}", traffic_type="user"):
@@ -18,7 +17,7 @@ class Experiment(object):
     def run(self, sample_size):
         (base_keys, comp_keys) = self.get_samples(sample_size)
         for event_result in self.event_results:
-            (base_events, comp_events) = events(event_result, len(base_keys), len(comp_keys))
+            (base_events, comp_events) = event_result.events(len(base_keys), len(comp_keys))
             self.send_events(event_result, base_events, base_keys)
             self.send_events(event_result, comp_events, comp_keys)
         self.split_client.destroy()

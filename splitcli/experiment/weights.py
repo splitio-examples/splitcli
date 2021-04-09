@@ -1,6 +1,5 @@
 import numpy as np
 from functools import cache
-import cProfile
 
 class Weights(object):
     def __init__(self, mean, std, sample_size, zeros=0):
@@ -21,15 +20,15 @@ class Weights(object):
     
     def apply_transforms(self):
         while True:
-            (score, transform) = self.optimal_transform()
-            if score is None or transform[0] == transform[1]:
+            transform = self.optimal_transform()
+            if transform is None or transform[0] == transform[1]:
                 return
             else:
                 self.adjust(transform[0], -1)
                 self.adjust(transform[1])
     
     def optimal_transform(self):
-        best_score = None
+        best_score = self.score()
         best_transform = None
         for value in self.weights.keys():
             base_pair = self.totals_pair + transform(value, self.mean)
@@ -37,10 +36,10 @@ class Weights(object):
             for root in roots:
                 new_pair = base_pair - transform(root, self.mean)
                 score = self.score(new_pair)
-                if best_score == None or score < best_score:
+                if score < best_score:
                     best_score = score
                     best_transform = (value, root)
-        return (best_score, best_transform)
+        return best_transform
 
     def adjust(self, position, shift=1):
         change = transform(position, self.mean)
@@ -88,28 +87,9 @@ def find_optimal(m_total, s_total, mean):
 
     roots = np.array([
         g - f + mean, 
-        x*f - y*g + mean, 
+        x*f - y*g + mean,
         y*f - x*g + mean
     ])
-    print(roots)
-    reals = np.real(roots[np.isreal(roots)])
+    reals = np.abs(np.real(roots))
 
-    return np.append(np.floor(reals),np.ceil(reals))
-
-# np.set_printoptions(threshold=np.inf)
-
-# pr = cProfile.Profile()
-# pr.enable()
-# w = Weights(500, 50, 10000)
-# print(w.sample())
-# pr.disable()
-# pr.print_stats(sort='time')
-
-print(Weights(8,8.43115,466).sample())
-# print(Weights(8.32184,8.43115,534).sample())
-
-# print(Weights(85453,315001.9136,466).sample())
-# print(Weights(113303.84176,315001.9136,534).sample())
-
-# print(Weights(187.324,1239.23439,466).sample())
-# print(Weights(195.6264432012,1239.23439,534).sample())
+    return np.round(reals)

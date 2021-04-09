@@ -1,6 +1,8 @@
 from scipy import stats
 from collections import namedtuple
-import math
+import numpy as np
+
+from splitcli.experiment.weights import Weights
 
 Impact = namedtuple('Impact', ['delta','p_value','mean'])
 
@@ -36,3 +38,69 @@ class EventResult(object):
         self.value_impact = Impact(delta, p_value, mean)
         self.is_total = True
         return self
+
+    def events(self, n1, n2):
+        p1 = self.probability_impact.mean
+        c1 = self.count_impact.mean
+        v1 = self.value_impact.mean
+        z1 = n1 - int(n1 * p1)
+
+        p2 = min(1, p1 * (1 + self.probability_impact.delta))
+        c2 = c1 * (1 + self.count_impact.delta)
+        v2 = v1 * (1 + self.value_impact.delta)
+        z2 = n2 - int(n2 * p2)
+
+        c_std = self.std_dev(c1,c2,n1,n2,self.count_impact.p_value)
+        v_std = self.std_dev(v1,v2,n1,n2,self.value_impact.p_value)
+
+        counts_1 = self.create_sample(c1, c_std, n1, z1)
+        counts_2 = self.create_sample(c2, c_std, n2, z2)
+
+        if self.is_total == None:
+            values_1 = [0 for _ in range(n1)]
+            values_2 = [0 for _ in range(n2)]
+        if self.is_total == True:
+            values_1 = self.create_sample(v1, v_std, n1, z1)
+            values_2 = self.create_sample(v2, v_std, n2, z2)
+        else:
+            values_1 = self.create_sample(v1, v_std, n1 - z1)
+            values_1 = np.append(values_1, np.zeros(z1))
+            values_2 = self.create_sample(v2, v_std, n2 - z2)
+            values_2 = np.append(values_2, np.zeros(z1))
+        
+        lv1 = len(values_1)
+        lc1 = len(counts_1)
+        if lv1 != lc1:
+            raise ValueError(f"Unmatched result lengths: n1={n1} p1={p1} lv1={lv1} lc1={lc1}")
+        
+        base_events = self.to_sample(counts_1, values_1)
+        comp_events = self.to_sample(counts_2, values_2)
+
+        return (base_events, comp_events)
+
+    def to_sample(self, counts, values):
+        sample = []
+        for (count,value) in zip(counts, values):
+            count = int(count)
+            if count == 0:
+                value = 0
+            elif self.is_total:
+                value = value / count
+            sample.append((count,value))
+        return sample
+
+    def std_dev(self,m1,m2,n1,n2,p_value):
+        if m1 == 0:
+            return m2-m1
+        
+        df = n1 + n2 - 2.0
+        k = np.sqrt(1./n1 + 1./n2)
+        t_out = stats.t.isf(p_value/2.0, df)
+        effect_size = k * t_out
+        
+        return round((m2-m1) / effect_size, 5)
+
+    def create_sample(self, m, std, n, zeros=0):
+        weights = Weights(m, std, n, zeros)
+        weights.apply_transforms()
+        return weights.sample()
