@@ -1,32 +1,28 @@
-from scipy import stats, optimize
 import numpy as np
 from functools import cache
+import cProfile
 
 class Weights(object):
-    def __init__(self, m_total, s_total, mean, n):
+    def __init__(self, mean, std, sample_size, zeros=0):
         super(Weights, self).__init__()
-        self.m_total = m_total
-        self.s_total = s_total
-        self.totals_pair = np.array((m_total, s_total))
-        self.values = set([])
 
         self.mean = mean
-        self.n = n
+        self.std = std
+        self.sample_size = sample_size
+        self.zeros = zeros
 
-        self.mx = self.max_value()
-        self.weights = np.zeros(self.mx)
+        m_total = mean * sample_size
+        s_total = std**2. * (sample_size-1) - zeros*(mean**2)
+        self.totals_pair = np.array((m_total, s_total))
 
-        self.adjust(0, n)
-    
-    def max_value(self):
-        m_max = int(np.ceil(self.m_total-(self.n-1)))
-        s_max = int(np.ceil(np.sqrt(abs(self.s_total))+self.mean))
-        return min(m_max, s_max)
+        self.weights = {}
+        self.adjust(1, self.sample_size - self.zeros)
+        self.apply_transforms()
     
     def apply_transforms(self):
         while True:
             (score, transform) = self.optimal_transform()
-            if transform[0] == transform[1]:
+            if score is None or transform[0] == transform[1]:
                 return
             else:
                 self.adjust(transform[0], -1)
@@ -35,76 +31,85 @@ class Weights(object):
     def optimal_transform(self):
         best_score = None
         best_transform = None
-        for value in self.values:
+        for value in self.weights.keys():
             base_pair = self.totals_pair + transform(value, self.mean)
-            for p in range(len(self.weights)):
-                new_pair = base_pair - transform(p, self.mean)
+            roots = find_optimal(base_pair[0],base_pair[1], self.mean)
+            for root in roots:
+                new_pair = base_pair - transform(root, self.mean)
                 score = self.score(new_pair)
                 if best_score == None or score < best_score:
                     best_score = score
-                    best_transform = (value, p)
+                    best_transform = (value, root)
         return (best_score, best_transform)
 
     def adjust(self, position, shift=1):
         change = transform(position, self.mean)
         self.totals_pair += -1 * shift * change
-        self.weights[position] += shift
+        self.weights[position] = self.weights.get(position, 0) + shift
         if self.weights[position] == 0:
-            self.values.remove(position)
-        else:
-            self.values.add(position)
+            del self.weights[position]
     
     def sample(self):
-        sample = []
-        for i,weight in enumerate(self.weights):
-            sample.extend(np.repeat(i+1,int(weight)))
+        if self.sample_size <= self.zeros:
+            return np.zeros(self.sample_size)
+
+        if self.std == 0:
+            return np.repeat(self.mean,self.sample_size)
+        
+        sample = np.zeros(self.zeros)
+        for i,weight in sorted(self.weights.items()):
+            sample = np.append(sample, np.repeat(i,int(weight)))
+
         return sample
     
     def score(self, pair=None):
         if pair is None:
             pair = self.totals_pair
-        return (pair[0]**2 + abs(pair[1]))
+        return (pair**2).sum()
 
 @cache
-def transform(i, mean):
-    x = i+1
+def transform(x, mean):
     return np.array((x, (x-mean)**2))
 
-def inst(mean, std, n):
-    m_total = mean * n
-    s_total = std**2 * (n-1)
-    return Weights(m_total, s_total, mean, n)
+@cache
+def find_optimal(m_total, s_total, mean):
+    a = 108*(m_total - mean)
+    b = 6 - 12 * s_total
+    c = np.square(a) + 4. * np.power(b,3)
+    d = np.lib.scimath.sqrt(c) + a
+    e = d.astype(np.cdouble)**(1/3.)
 
-def create_sample(m, std, n, zeros=0):
-    if n <= zeros:
-        return np.zeros(n)
+    f = b / (3 * np.cbrt(4) * e)
+    g = e / (6 * np.cbrt(2))
 
-    if std == 0:
-        return np.repeat(m,n)
-    
-    non_zeros = n - zeros
-    subset = best_factor(non_zeros)
-    repeater = non_zeros / subset
-    
-    m_total = m * n / repeater
-    s_total = (std**2 * (n-1) - zeros*(m**2)) / repeater
+    h = 1j*np.sqrt(3)
+    x = (1+h)/2
+    y = (1-h)/2
 
-    weights = Weights(m_total, s_total, m, subset)
-    weights.apply_transforms()
+    roots = np.array([
+        g - f + mean, 
+        x*f - y*g + mean, 
+        y*f - x*g + mean
+    ])
+    print(roots)
+    reals = np.real(roots[np.isreal(roots)])
 
-    result = weights.sample()
-    sample = np.repeat(result, repeater)
-    sample = np.append(sample, np.zeros(zeros)) # Add zeros
-    return sample
+    return np.append(np.floor(reals),np.ceil(reals))
 
-def best_factor(n):
-    for i in range(10,100):
-        if n % i == 0:
-            return i
-    
-    if(subset_nz > 100):
-        raise ValueError(f"Factors of N are too big: n={n} nz={non_zeros} subset={subset_nz}")
+# np.set_printoptions(threshold=np.inf)
 
-np.set_printoptions(threshold=np.inf)
-print(create_sample(8,26.73163,5012,0))
-print(create_sample(8.32184,26.73163,4988,0))
+# pr = cProfile.Profile()
+# pr.enable()
+# w = Weights(500, 50, 10000)
+# print(w.sample())
+# pr.disable()
+# pr.print_stats(sort='time')
+
+print(Weights(8,8.43115,466).sample())
+# print(Weights(8.32184,8.43115,534).sample())
+
+# print(Weights(85453,315001.9136,466).sample())
+# print(Weights(113303.84176,315001.9136,534).sample())
+
+# print(Weights(187.324,1239.23439,466).sample())
+# print(Weights(195.6264432012,1239.23439,534).sample())
