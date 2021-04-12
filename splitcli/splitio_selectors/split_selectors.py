@@ -34,20 +34,13 @@ def create_split(workspace):
 
         (treatments, baseline) = definition_selectors.select_treatments()
 
-        splits_api.create_split(workspace["id"], traffic_type["name"], split_name, split_description)
-
-        create_split_in_all_environments(workspace, split_name, treatments, baseline)
+        create_split_operator(workspace["id"], traffic_type["name"], split_name, split_description, treatments, baseline)
         menu.success_message("Your split has been created!")
 
         split = splits_api.get_split(workspace['id'], split_name)
         manage_split(workspace, split)
     except Exception as exc:
         menu.error_message("Could not create split\n" + str(exc))
-
-def create_split_in_all_environments(workspace, split_name, treatments, baseline):
-    environments = environments_api.list_environments(workspace["id"])
-    for environment in environments:
-        definition_selectors.create_definition(workspace, split_name, environment)
 
 def manage_split(workspace, split):
     while True:
@@ -78,3 +71,14 @@ def delete_split(workspace, split):
         {"option_name": "No", "go_back": True}
     ]
     menu.select_operation(title, options)
+
+# Operators
+
+def create_split_operator(workspace_id, traffic_type_name, split_name, split_description="", treatments=["on","off"], baseline="off"):
+    # Create Metadata
+    splits_api.create_split(workspace_id, traffic_type_name, split_name, split_description)
+
+    # Create in all environments
+    environments = environments_api.list_environments(workspace_id)
+    for environment in environments:
+        definition_selectors.create_definition_operator(workspace_id, environment["name"], split_name, treatments, baseline)

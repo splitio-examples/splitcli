@@ -6,10 +6,10 @@ from splitcli.ux import menu
 
 def manage_definition(workspace, split, environment):
     while True:
-        definition = get_definition(workspace, split, environment)
+        definition = get_definition_operator(workspace["name"], environment["name"], split["name"])
         if definition == None:
             (treatments, baseline) = select_treatments()
-            create_definition(workspace, split["name"], environment, treatments, baseline)
+            create_definition_operator(workspace["id"], environment["name"], split["name"], treatments, baseline)
         else:
             title = "Managing " + split["name"] + " in " + environment["name"]
 
@@ -94,12 +94,6 @@ def show_definition(definition):
     else:
         menu.info_message(output)
 
-def get_definition(workspace, split, environment):
-    try:
-        return definitions_api.get(workspace["id"], environment["name"], split["name"])
-    except Exception as _:
-        return None
-
 def delete_definition(workspace, split, environment):
     title = "Are you sure?"
     options = [
@@ -108,27 +102,6 @@ def delete_definition(workspace, split, environment):
         {"option_name": "No", "go_back": True}
     ]
     menu.select_operation(title, options)
-
-def create_definition(workspace, split_name, environment, treatments=["on", "off"], baseline="off"):
-    try:
-        split_data = split_templates.new_split(treatments, baseline)
-        definitions_api.create(workspace["id"], environment["name"], split_name, split_data)
-    except Exception as exc:
-        menu.error_message("Could not create split\n" + str(exc))
-
-def kill_definition(workspace, split, environment):
-    try:
-        definitions_api.kill(workspace["id"], environment["name"], split["name"])
-        menu.success_message(f"You killed " + split["name"] + " in " + environment["name"] + ". RIP.")
-    except Exception as exc:
-        menu.error_message("Could not kill split\n" + str(exc))
-
-def restore_definition(workspace, split, environment):
-    try:
-        definitions_api.restore(workspace["id"], environment["name"], split["name"])
-        menu.success_message(f"You restored " + split["name"] + " in " + environment["name"] + ". It's Alive!!")
-    except Exception as exc:
-        menu.error_message("Could not restore split\n" + str(exc))
 
 def target_keys(workspace, split, environment, definition):
     try:
@@ -175,5 +148,69 @@ def ramp_split(workspace, split, environment, definition):
         treatment_map[default_treatment] = 100 - total_ramp
         split_data = split_templates.ramp_default_rule(definition, treatment_map)
         definitions_api.full_update(workspace["id"], environment["name"], split["name"], split_data)
+    except Exception as exc:
+        menu.error_message("Could not update split\n" + str(exc))
+
+
+# Operators
+
+def get_definition_operator(workspace_id, environment_name, split_name, expected=False):
+    try:
+        return definitions_api.get(workspace_id, environment_name, split_name)
+    except Exception as exc:
+        if expected:
+            menu.error_message("Definition does not exist:" + str(exc))
+        return None
+
+def create_definition_operator(workspace_id, environment_name, split_name, treatments=["on", "off"], baseline="off"):
+    try:
+        split_data = split_templates.new_split(treatments, baseline)
+        definitions_api.create(workspace_id, environment_name, split_name, split_data)
+    except Exception as exc:
+        menu.error_message("Could not create split\n" + str(exc))
+
+def kill_definition(workspace, split, environment):
+    try:
+        definitions_api.kill(workspace["id"], environment["name"], split["name"])
+        menu.success_message(f"You killed " + split["name"] + " in " + environment["name"] + ". RIP.")
+    except Exception as exc:
+        menu.error_message("Could not kill split\n" + str(exc))
+
+def restore_definition(workspace, split, environment):
+    try:
+        definitions_api.restore(workspace["id"], environment["name"], split["name"])
+        menu.success_message(f"You restored " + split["name"] + " in " + environment["name"] + ". It's Alive!!")
+    except Exception as exc:
+        menu.error_message("Could not restore split\n" + str(exc))
+
+def ramp_split_operator(workspace_id, environment_name, split_name, ramp_percent=None, treatment_map=None):
+    try:
+        # Validate Inputs
+        if ramp_percent is not None and treatment_map is not None:
+            raise ValueError("Either ramp_percent or treatment_map must be set, currently both")
+        
+        # Get current definition
+        definition = get_definition_operator(workspace_id, environment_name, split_name, expected=True)
+        if definition is None:
+            raise ValueError("Definition not found")
+
+        if ramp_percent is not None:
+            # Set Ramp Percent
+            treatment_map = {}
+            treatments = definition["treatments"]
+            if len(definition["treatments"]) != 2:
+                raise ValueError("Definition must have two treatments to use ramp_percent")
+            default_treatment = definition['defaultTreatment']
+            for treatment in treatments:
+                treatment_name = treatment['name']
+                if treatment_name != default_treatment:
+                    treatment_map[treatment_name] = ramp_percent
+            treatment_map[default_treatment] = 100 - ramp_percent
+        elif treatment_map is None:
+            raise ValueError("Either ramp_percent or treatment_map must be set, currently neither")
+    
+        # Update Split
+        split_data = split_templates.ramp_default_rule(definition, treatment_map)
+        definitions_api.full_update(workspace_id, environment_name, split_name, split_data)
     except Exception as exc:
         menu.error_message("Could not update split\n" + str(exc))
