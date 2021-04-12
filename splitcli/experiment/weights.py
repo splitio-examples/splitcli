@@ -170,7 +170,7 @@ def find_optimal(m_total, s_total, mean, is_count):
     ])
 
     # Isolates the real portion of the roots, as they may be complex
-    # I originally ignored non-real numbers but found that the real part of complex roots can perform better
+    # I originally ignored complex numbers but found that their real part can perform better than entirely real roots
     reals = np.real(roots)
 
     # Count metrics must be positive integers

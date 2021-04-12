@@ -32,7 +32,6 @@ class TrackingClient(object):
         print(sample)
         return sum(distribution) / sample
     
-    
     def rate_variance(self, sample):
         return self.variance(sample, lambda x: 1)
     

@@ -94,8 +94,6 @@ class EventResult(object):
             return m2-m1
         
         df = n1 + n2 - 2.0
-        k = np.sqrt(1./n1 + 1./n2)
         t_out = stats.t.isf(p_value/2.0, df)
-        effect_size = k * t_out
-        
-        return round((m2-m1) / effect_size, 5)
+        k = np.sqrt(1./n1 + 1./n2)
+        return (m2-m1) / (t_out * k)
