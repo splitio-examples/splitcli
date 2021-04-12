@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 from splitcli.split_apis import http_client
 
 # URLs
@@ -33,15 +35,15 @@ def list_users(status=None,group_id=None):
 
 def list_users_batch(next=None, status=None, group_id=None):
     path = users_url()
-    query = ""
+    query = {}
     if next is not None:
-        query += f"after={next}"
+        query["after"] = next
     if status is not None:
-        query += f"status={status}"
+        query["status"] = status
     if group_id is not None:
-        query += f"group_id={group_id}"
-    if len(query) > 0:
-        path += f"?{query}"
+        query["group_id"] = group_id
+    if query:
+        path += f"?{urlencode(query)}"
     return http_client.get(path)
 
 def get_user_by_email(email):
