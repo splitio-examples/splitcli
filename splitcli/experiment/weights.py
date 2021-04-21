@@ -91,12 +91,15 @@ class Weights(object):
         if self.sample_size <= self.zeros:
             return np.zeros(self.sample_size)
 
-        # If there is no standard deviation, just return the mean
-        if self.std == 0:
-            return np.repeat(self.mean,self.sample_size)
-        
         # Start the sample with all zeros
         sample = np.zeros(self.zeros)
+
+        # If there is no standard deviation, just return the mean
+        if self.std == 0:
+            non_zeros = self.sample_size - self.zeros
+            sample = np.append(sample, np.repeat(self.mean,non_zeros))
+            return sample
+        
         for i,weight in sorted(self.weights.items()):
             # Add each value in the sample by its weight
             sample = np.append(sample, np.repeat(i,int(weight)))

@@ -214,3 +214,14 @@ def ramp_split_operator(workspace_id, environment_name, split_name, ramp_percent
         definitions_api.full_update(workspace_id, environment_name, split_name, split_data)
     except Exception as exc:
         menu.error_message("Could not update split\n" + str(exc))
+
+def target_segments_operator(workspace_id, environment_name, split_name, treatment_name, segment_names):
+    try:
+        # Get current definition
+        definition = get_definition_operator(workspace_id, environment_name, split_name, expected=True)
+        if definition is None:
+            raise ValueError("Definition not found")
+        split_data = split_templates.set_segments(definition, treatment_name, segment_names)
+        definitions_api.full_update(workspace_id, environment_name, split_name, split_data)
+    except Exception as exc:
+        menu.error_message("Could not update split\n" + str(exc))

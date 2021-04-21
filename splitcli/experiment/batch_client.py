@@ -30,9 +30,9 @@ class BatchClient(object):
 			sys.exit(1)
 		self.split_client = self.factory.client()
 
-	def get_treatment(self, key, feature):
+	def get_treatment(self, key, feature, attributes={}):
 		global all_count
-		treatment = self.split_client.get_treatment(key, feature)
+		treatment = self.split_client.get_treatment(key, feature, attributes)
 		all_count += 1
 		if all_count >= queue_size:
 			time.sleep(.5)

@@ -12,7 +12,7 @@ def initial_prompt():
     # Infinite loop is stopped by exit option
     while True:
         current_user = user.get_user()
-        if user != None:
+        if current_user is not None:
             knownUserPrompt(current_user)
         else:
             newUserPrompt()

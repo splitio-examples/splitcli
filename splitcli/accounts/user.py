@@ -21,6 +21,7 @@ def load_user():
     try:
         with open(config.config_file, 'r') as f:
             dictionary = json.load(f)
+            print(dictionary)
             return User(dictionary["adminapi"], dictionary["orgID"], dictionary["userID"], dictionary["firstname"], dictionary["lastname"], dictionary["email"])
     except:
         return None

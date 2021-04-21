@@ -4,7 +4,7 @@ from splitcli.experiment.batch_client import BatchClient
 from splitcli.experiment.event_result import EventResult
 
 class Experiment(object):
-    def __init__(self, sdk_token, feature, comp_treatment="on", key_pattern="user_{position}", traffic_type="user"):
+    def __init__(self, sdk_token, feature, comp_treatment="on", key_pattern="user_{position}", traffic_type="user", attributes={}):
         super(Experiment, self).__init__()
         self.sdk_token = sdk_token
         self.split_client = BatchClient(sdk_token)
@@ -13,6 +13,7 @@ class Experiment(object):
         self.key_pattern = key_pattern
         self.event_results = []
         self.traffic_type = traffic_type
+        self.attributes = attributes
 
     def run(self, sample_size):
         (base_keys, comp_keys) = self.get_samples(sample_size)
@@ -27,7 +28,7 @@ class Experiment(object):
         comp_keys = []
         for position in range(sample_size):
             key = self.key(position)
-            treatment = self.split_client.get_treatment(key, self.feature)
+            treatment = self.split_client.get_treatment(key, self.feature, self.attributes)
             if treatment == self.comp_treatment:
                 comp_keys.append(key)
             else:
