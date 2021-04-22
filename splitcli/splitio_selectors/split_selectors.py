@@ -48,7 +48,7 @@ def manage_split(workspace, split):
 
         options = []
         for environment in environments:
-            definition = definition_selectors.get_definition(workspace, split, environment)
+            definition = definition_selectors.get_definition_operator(workspace, split, environment)
             option = environment
             if definition == None:
                 option["option_name"] = "Create in " + option["name"]
