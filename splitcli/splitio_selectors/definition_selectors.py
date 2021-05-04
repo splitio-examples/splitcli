@@ -6,7 +6,7 @@ from splitcli.ux import menu
 
 def manage_definition(workspace, split, environment):
     while True:
-        definition = get_definition_operator(workspace["name"], environment["name"], split["name"])
+        definition = get_definition_operator(workspace["id"], environment["name"], split["name"])
         if definition == None:
             (treatments, baseline) = select_treatments()
             create_definition_operator(workspace["id"], environment["name"], split["name"], treatments, baseline)
@@ -41,7 +41,7 @@ def select_treatments():
 
 def input_treatments():
     treatments = menu.input_list("Add treatment name", treatments_validator)
-    baseline,_ = menu.select("Select baseline treatment", treatments)
+    baseline = menu.select("Select baseline treatment", treatments)
     return (treatments, baseline)
 
 def treatments_validator(treatments):
