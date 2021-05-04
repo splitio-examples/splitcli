@@ -158,8 +158,8 @@ def get_definition_operator(workspace_id, environment_name, split_name, expected
     try:
         return definitions_api.get(workspace_id, environment_name, split_name)
     except Exception as exc:
-        # if expected:
-        menu.error_message("Definition does not exist:" + str(exc))
+        if expected:
+            menu.error_message("Definition does not exist:" + str(exc))
         return None
 
 def create_definition_operator(workspace_id, environment_name, split_name, treatments=["on", "off"], baseline="off"):
