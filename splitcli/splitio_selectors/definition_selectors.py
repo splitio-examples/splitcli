@@ -6,7 +6,7 @@ from splitcli.ux import menu
 
 def manage_definition(workspace, split, environment):
     while True:
-        definition = get_definition_operator(workspace["name"], environment["name"], split["name"])
+        definition = get_definition_operator(workspace["id"], environment["name"], split["name"])
         if definition == None:
             (treatments, baseline) = select_treatments()
             create_definition_operator(workspace["id"], environment["name"], split["name"], treatments, baseline)
@@ -158,8 +158,8 @@ def get_definition_operator(workspace_id, environment_name, split_name, expected
     try:
         return definitions_api.get(workspace_id, environment_name, split_name)
     except Exception as exc:
-        if expected:
-            menu.error_message("Definition does not exist:" + str(exc))
+        # if expected:
+        menu.error_message("Definition does not exist:" + str(exc))
         return None
 
 def create_definition_operator(workspace_id, environment_name, split_name, treatments=["on", "off"], baseline="off"):

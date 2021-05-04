@@ -103,7 +103,6 @@ def show_keys(segment_name, environment):
     page = 0
     while True:
         keys = segments_api.get_segment_keys(segment_name, environment["name"], page)
-        print(keys)
 
 def add_keys(segment_name, environment):
     pass

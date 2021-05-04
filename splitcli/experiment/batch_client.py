@@ -44,7 +44,6 @@ class BatchClient(object):
 		while not success:
 			success = self.split_client.track(key, traffic_type, event_type, value, properties)
 			if not success:
-				print(key, traffic_type, event_type, value, properties)
 				time.sleep(.1)
 	
 	def destroy(self):
