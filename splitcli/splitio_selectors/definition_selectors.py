@@ -41,7 +41,7 @@ def select_treatments():
 
 def input_treatments():
     treatments = menu.input_list("Add treatment name", treatments_validator)
-    baseline,_ = menu.select("Select baseline treatment", treatments)
+    baseline = menu.select("Select baseline treatment", treatments)
     return (treatments, baseline)
 
 def treatments_validator(treatments):
