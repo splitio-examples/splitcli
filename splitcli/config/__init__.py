@@ -3,7 +3,7 @@ import os
 from os.path import expanduser
 from splitcli.ux import text
 
-SPLIT_CLI_BACKEND_URI = "https://split-cli-backend.herokuapp.com"
+SPLIT_CLI_BACKEND_URI = "https://cli-backend.afitnerd.com"
 SPLIT_CLI_BACKEND_API_URI = "/api/v1"
 SPLIT_CLI_BACKEND_BASE_URL = f"{SPLIT_CLI_BACKEND_URI}{SPLIT_CLI_BACKEND_API_URI}"
 

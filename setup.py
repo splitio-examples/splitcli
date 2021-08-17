@@ -7,7 +7,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
     name='splitcli',
-    version='0.0.10',
+    version='0.1.0',
     description='Use Split.io from the command line',
     long_description=long_description,
     long_description_content_type='text/markdown',
