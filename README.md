@@ -2,7 +2,7 @@
 
 -------------------
 
-**NOTE**: 9/24/2021 - A few months ago Split Skunkworks (aka developer advocacy) embarked on an experiment to create a command line interface (CLI) tool to provision and interact with Split accounts. The experiment was a success and we are now assessing putting formal engineering muscle behind it. For now, we are taking it offline until such time as we are ready to release a fully supported version.
+**NOTE**: 9/24/2021 - A few months ago Split Skunkworks (aka developer advocacy) embarked on an experiment to create a command line interface (CLI) tool to provision and interact with Split accounts. The experiment was a success and we are now assessing putting formal engineering muscle behind it. **For now, we are taking it offline until such time as we are ready to release a fully supported version.**
 
 --------------------
 
