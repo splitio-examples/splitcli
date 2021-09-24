@@ -7,6 +7,15 @@ from splitcli.accounts import signup, user, signin
 from splitcli.ux import menu, text
 from splitcli import config
 
+def initial_prompt_deprecate():
+    print('''
+A few months ago Split Skunkworks (aka developer advocacy) embarked on an 
+experiment to create a command line interface (CLI) tool to provision and 
+interact with Split accounts. The experiment was a success and we are now 
+assessing putting formal engineering muscle behind it. For now, we are taking 
+it offline until such time as we are ready to release a fully supported version.
+    ''')
+    exit()
 
 def initial_prompt():
     # Infinite loop is stopped by exit option
@@ -51,6 +60,6 @@ def main():
         exit()
 
     menu.print_logo()
-    initial_prompt()
+    initial_prompt_deprecate()
 
 main()

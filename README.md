@@ -1,5 +1,11 @@
 # Welcome to the Split CLI 👋
 
+-------------------
+
+**NOTE**: 9/24/2021 - A few months ago Split Skunkworks (aka developer advocacy) embarked on an experiment to create a command line interface (CLI) tool to provision and interact with Split accounts. The experiment was a success and we are now assessing putting formal engineering muscle behind it. For now, we are taking it offline until such time as we are ready to release a fully supported version.
+
+--------------------
+
 The Split CLI is a Command Line Interface built to simplify onboarding, and make it easy to manage your entire feature flag lifecycle. The changes and updates you make to your splits through the CLI will be reflected immediately in the Split UI.
 
 ---
